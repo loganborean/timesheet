@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+   <h:head>
+      <title>Login</title>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+   </h:head>
+   <h:body>
+   <h3>Login Page</h3>
+   <div class="container">
+    <div class="row vertical-offset-100">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Please sign in</h3>
+                </div>
+                <div class="panel-body">
+                    <h:form>
+                        <fieldset>
+                            <div class="form-group">
+                                <h:inputText class="form-control" a:placeholder="Username" value="#{login.username}" />
+                            </div>
+                            <div class="form-group">
+                                <h:inputSecret class="form-control" a:placeholder="Password" value="#{login.password}"/>
+                            </div>
+                            <h:commandButton class="btn btn-lg btn-success btn-block" value="Submit" action="#{login.loginAction}"/>
+                            <label> Don't have an account?</label>
+                            <a href="/pages/signup">Sign up</a>
+                        </fieldset>
+                    </h:form >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  </h:body>
+</html>
