@@ -14,18 +14,19 @@ import ca.bcit.infosys.employee.EmployeeList;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 
-@Named("login") 
+@Named("user") 
 @SessionScoped
-public class LoginService implements Serializable {
+public class UserService implements Serializable {
 	
 	private String username;
 	private String password;
 	private Employee currentEmployee;
-	private EmployeeList employeeList;
+//	private EmployeeList employeeList;
 	
-	public LoginService() {
-		this.employeeList = new EmployeeListNoDBimpl();
-		
+	@Inject @NoDB private EmployeeList employeeList;
+	
+	public UserService() {
+//		this.employeeList = new EmployeeListNoDBimpl();
 	}
 
 	public String loginAction() {
@@ -41,8 +42,13 @@ public class LoginService implements Serializable {
 			return "timesheet";
 		}
 		return "login";
+	}
+	
+	public void createUserAction() {
 		
 	}
+	
+	
 	public void setCurrentEmployee(Employee emp) {
 		currentEmployee = emp;
 	}

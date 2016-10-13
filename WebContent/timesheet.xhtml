@@ -2,19 +2,46 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
-   <h:head>
-      <title>Login</title>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-   </h:head>
-   <h:body>
-   <h3>Timesheet</h3>
-   <div class="container">
-   <p>timesheet</p>
-    </div>
-  </h:body>
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+<head><title></title></head>
+<body>
+<ui:composition template="/templates/base.xhtml">
+<ui:define name="content">
+
+  <h3>Timesheet</h3>
+  <div class="container">
+  <h4>Create New user</h4>
+  <h:form>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Name: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.name}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Employee Id: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.empId}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Username: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.username}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Password: </label>
+		  <div class="col-xs-4">
+			  <h:inputSecret class="form-control" value="#{createUser.password}"/>
+		  </div>
+	  </div>
+	  <h:commandButton class="btn btn-lg btn-success " action="#{createUser.createUserAction}" value="Create" />
+  </h:form>
+  
+  </div>
+</ui:define>
+</ui:composition>
+</body>
 </html>

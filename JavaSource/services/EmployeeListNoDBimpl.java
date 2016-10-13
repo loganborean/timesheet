@@ -1,16 +1,22 @@
 package services;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
+
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 
-public class EmployeeListNoDBimpl implements EmployeeList {
+@NoDB
+@ApplicationScoped
+public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
 	/**
 	 * username, password
@@ -29,6 +35,11 @@ public class EmployeeListNoDBimpl implements EmployeeList {
 						//username, paassword
 		loginCombos.put("logan", "aaa");
 		employees.add(administrator);
+	}
+	
+	@Override
+    public void setLoginCombos(Credentials cred) {
+		loginCombos.put(cred.getUserName(), cred.getPassword());
 	}
 
 	@Override

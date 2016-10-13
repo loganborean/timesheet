@@ -2,16 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
-   <h:head>
-      <title>Login</title>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-	  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-   </h:head>
-   <h:body>
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough" >
+<head><title></title></head>
+<body>
+<ui:composition template="/templates/base.xhtml">
+<ui:define name="content">
    <h3>Login Page</h3>
    <div class="container">
     <div class="row vertical-offset-100">
@@ -24,12 +21,12 @@
                     <h:form>
                         <fieldset>
                             <div class="form-group">
-                                <h:inputText class="form-control" a:placeholder="Username" value="#{login.username}" />
+                                <h:inputText class="form-control" a:placeholder="Username" value="#{user.username}" />
                             </div>
                             <div class="form-group">
-                                <h:inputSecret class="form-control" a:placeholder="Password" value="#{login.password}"/>
+                                <h:inputSecret class="form-control" a:placeholder="Password" value="#{user.password}"/>
                             </div>
-                            <h:commandButton class="btn btn-lg btn-success btn-block" value="Submit" action="#{login.loginAction}"/>
+                            <h:commandButton class="btn btn-lg btn-success btn-block" value="Submit" action="#{user.loginAction}"/>
                             <label> Don't have an account?</label>
                             <a href="/pages/signup">Sign up</a>
                         </fieldset>
@@ -39,5 +36,7 @@
         </div>
     </div>
 </div>
-  </h:body>
+</ui:define>
+</ui:composition>
+</body>
 </html>
