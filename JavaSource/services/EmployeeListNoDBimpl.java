@@ -95,8 +95,7 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
 	@Override
 	public void addEmployee(Employee newEmployee) {
-		// TODO Auto-generated method stub
-		
+		employees.add(newEmployee);
 	}
 	
 
