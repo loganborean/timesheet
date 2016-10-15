@@ -21,13 +21,10 @@ public class UserService implements Serializable {
 	private String username;
 	private String password;
 	private Employee currentEmployee;
-//	private EmployeeList employeeList;
 	
 	@Inject @NoDB private EmployeeList employeeList;
 	
-	public UserService() {
-//		this.employeeList = new EmployeeListNoDBimpl();
-	}
+	public UserService() { }
 
 	public String loginAction() {
 		
@@ -36,7 +33,6 @@ public class UserService implements Serializable {
 			Employee employee = findEmployee(cred);
 			if (isAdmin(employee)) {
 				//current user is admin
-
 			}
 			setCurrentEmployee(employee);
 			return "timesheet";
@@ -47,6 +43,7 @@ public class UserService implements Serializable {
 	public void createUserAction() {
 		
 	}
+	
 	
 	
 	public void setCurrentEmployee(Employee emp) {

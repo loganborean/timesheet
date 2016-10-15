@@ -3,6 +3,7 @@ package services;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,26 +72,27 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
 	@Override
 	public boolean verifyUser(Credentials credential) {
-		Map<String, String> validLogins = getLoginCombos();
-		for (Entry<String, String> entry : validLogins.entrySet()) {
-			if ( (entry.getKey()).equals(credential.getUserName()) &&
-				 (entry.getValue()).equals(credential.getPassword()) ) {
-				return true;
-			}
-		}
-		return false;
+		return (loginCombos.get(credential.getUserName())).equals(credential.getPassword());
 	}
 
 	@Override
 	public String logout(Employee employee) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	@Override // has side effect -- delete login combos
 	public void deleteEmpoyee(Employee userToDelete) {
-		// TODO Auto-generated method stub
-		
+		//delete employee
+		Iterator<Employee> iter = employees.iterator();
+		while (iter.hasNext()) {
+		    Employee emp = iter.next();
+
+		    if (userToDelete == emp)
+		        iter.remove();
+		}
+
+		//delete their login credentials 
+		loginCombos.remove(userToDelete.getUserName());
 	}
 
 	@Override

@@ -7,8 +7,32 @@
 <body>
 <ui:composition>
 
-  <h3>Header</h3>
-  
+<div id="wrapper">
+    <!-- Navigation -->
+    <div class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <!-- /.navbar-header -->
+        <div class="container-fluid">
+            <div class="navbar-header">
+				<a class="navbar-brand" href="/pages/login">Timesheet</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Sheets</a></li>
+                <li><a href="#">Admin</a></li>
+            </ul>
+        <!-- /.if logged in -->
+        <!--
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/pages/logoutAction"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
+                </ul>
+                -->
+        <!-- /.if logged in -->
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/pages/login"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
+                </ul>
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+</div>  
 </ui:composition>
 </body>
 </html>
