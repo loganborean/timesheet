@@ -1,4 +1,4 @@
-package services;
+package annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

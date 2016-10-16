@@ -12,7 +12,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Create New user</h1>
+            <h1 class="page-header">Administration</h1>
         </div>
         <!-- /.col-lg-12 -->
     </div>
@@ -46,6 +46,7 @@
   <br/>
   
     <h:form>
+	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
     <h:dataTable class="table table-striped" id="reportTable" value="#{admin.allEmployees}"
                  var="emp">
         <h:column>
@@ -67,7 +68,16 @@
                 <h:outputText value="UserName" />
             </f:facet>
             <h:outputText value="#{emp.userName}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.userName}" rendered="#{admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.userName}" rendered="#{admin.isEditing(emp)}">
+                <f:validator validatorId="userName" />
+            </h:inputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Password" />
+            </f:facet>
+            <h:outputText value="#{admin.credentials[emp.userName]}" rendered="#{not admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{admin.credentials[emp.userName]}" rendered="#{admin.isEditing(emp)}"/>
         </h:column>
         <h:column>
 			<h:commandLink action="#{admin.editAction(emp)}" class="btn btn-default btn-sm btn-warning"

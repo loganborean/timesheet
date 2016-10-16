@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import annotations.NoDB;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
@@ -30,7 +31,7 @@ public class UserService implements Serializable {
 		
 		Credentials cred = makeCredentials();
 		if (employeeList.verifyUser(cred)) {
-			Employee employee = findEmployee(cred);
+			Employee employee = findEmployeeByUsername(cred.getUserName());
 			if (isAdmin(employee)) {
 				//current user is admin
 			}
@@ -38,6 +39,7 @@ public class UserService implements Serializable {
 			return "timesheet";
 		}
 		return "login";
+
 	}
 	
 	public void createUserAction() {
@@ -49,19 +51,14 @@ public class UserService implements Serializable {
 	public void setCurrentEmployee(Employee emp) {
 		currentEmployee = emp;
 	}
-	private Employee findEmployee(Credentials cred) {
-			List<Employee> employees = employeeList.getEmployees();
-			Employee employee = findEmployeeByUsername(employees, cred.getUserName());
-			return employee;
-	}
 	
 	private boolean isAdmin(Employee emp) {
 		return emp.getEmpNumber() == employeeList.getAdministrator().getEmpNumber();
 		
 	}
 	
-	private Employee findEmployeeByUsername(List<Employee> employees, String username) {
-		for (Employee emp : employees) {
+	private Employee findEmployeeByUsername(String username) {
+		for (Employee emp : employeeList.getEmployees()) {
 			if (emp.getUserName().equals(username)) {
 				return emp;
 			}

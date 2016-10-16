@@ -1,4 +1,4 @@
-package services;
+package dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 
+import annotations.NoDB;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
@@ -86,9 +87,9 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 		Iterator<Employee> iter = employees.iterator();
 		while (iter.hasNext()) {
 		    Employee emp = iter.next();
-
-		    if (userToDelete == emp)
+		    if (userToDelete == emp) {
 		        iter.remove();
+		    }
 		}
 
 		//delete their login credentials 
