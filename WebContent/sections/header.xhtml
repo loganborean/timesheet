@@ -16,10 +16,12 @@
             <div class="navbar-header">
 				<h:link class="navbar-brand" value="Timesheet" outcome="timesheet" />
             </div>
+            <h:panelGroup layout="block" rendered="#{user.loggedIn}">
             <ul class="nav navbar-nav">
 				<li><h:link class="nav-item" value="sheets" outcome="timesheet" /></li>
 				<li><h:link class="nav-item" value="Admin" outcome="admin" /></li>
             </ul>
+            </h:panelGroup>
         <!-- /.if logged in -->
         <!--
                 <ul class="nav navbar-nav navbar-right">
@@ -27,9 +29,15 @@
                 </ul>
                 -->
         <!-- /.if logged in -->
+            <h:panelGroup layout="block" rendered="#{user.loggedIn}">
+				<h:form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/pages/login"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
+                    <li>
+                    <h:commandLink styleClass="glyphicon glyphicon-log-in" value=" Logout" action="#{user.logoutAction()}"/>
+					</li>
                 </ul>
+				</h:form>
+			</h:panelGroup>
         </div>
     </div>
     <!-- /#page-wrapper -->

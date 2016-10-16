@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import annotations.NoDB;
 import ca.bcit.infosys.employee.Credentials;
@@ -14,6 +15,7 @@ import ca.bcit.infosys.employee.EmployeeList;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @Named("user") 
 @SessionScoped
@@ -27,6 +29,10 @@ public class UserService implements Serializable {
 	
 	public UserService() { }
 
+	public boolean isLoggedIn() {
+		return currentEmployee != null;
+	}
+
 	public String loginAction() {
 		
 		Credentials cred = makeCredentials();
@@ -36,7 +42,7 @@ public class UserService implements Serializable {
 				//current user is admin
 			}
 			setCurrentEmployee(employee);
-			return "timesheet";
+			return "admin.xhtml?faces-redirect=true";
 		}
 		return "login";
 
@@ -45,7 +51,15 @@ public class UserService implements Serializable {
 	public void createUserAction() {
 		
 	}
-	
+	public String logoutAction() {
+		username = null;
+		password = null;
+		currentEmployee = null;
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+	    HttpSession httpSession = (HttpSession)facesContext.getExternalContext().getSession(false);
+		httpSession.invalidate();
+		return "login.xhtml?faces-redirect=true";
+	}
 	
 	
 	public void setCurrentEmployee(Employee emp) {

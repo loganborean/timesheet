@@ -32,7 +32,7 @@ public class CreateUser implements Serializable {
 		employeeList.setLoginCombos(cred);
 		employeeList.addEmployee(newEmp);
 		
-		return "timesheet";
+		return "admin";
 		
 	}
 	

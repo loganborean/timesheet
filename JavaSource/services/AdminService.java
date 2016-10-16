@@ -47,7 +47,7 @@ public class AdminService implements Serializable {
 
 	public String editAction(Employee emp) {
 		editable.add(emp);
-		return "timesheet";
+		return "admin";
 	}
 
 	public boolean isEditing(Employee emp) {
@@ -61,12 +61,12 @@ public class AdminService implements Serializable {
 	
 	public String deleteAction(Employee emp) {
 		employeeList.deleteEmpoyee(emp); //side effect -- deletes login combo
-		return "timesheet";
+		return "admin";
 	}
 	
 	public String saveAction() {
 		this.clearEditable();
-		return "timesheet";
+		return "admin";
 	}
 	
 	

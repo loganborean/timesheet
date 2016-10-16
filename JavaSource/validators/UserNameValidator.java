@@ -19,6 +19,17 @@ public class UserNameValidator implements Validator {
 				new FacesMessage("Username must be between 3-15 characters"));
 		}
 		
+		for(int i = 0; i < userName.length(); i++) {
+			if (!Character.isLetter(userName.charAt(i)) ||
+				!Character.isDigit(userName.charAt(i)) ||
+				userName.charAt(i) != '_') {
+				throw new ValidatorException(
+					new FacesMessage("Only alphabetic, numeric and \'_\' characters are allowed"));
+				
+			}
+					
+		}
+		
 	}
 
 }

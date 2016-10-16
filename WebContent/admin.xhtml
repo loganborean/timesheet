@@ -14,7 +14,87 @@
         <div class="col-lg-12">
             <h1 class="page-header">Administration</h1>
         </div>
+        <!-- /.col-lg-12 -->
     </div>
+  <h:form>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Name: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.name}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Employee Id: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.empId}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Username: </label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createUser.username}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Password: </label>
+		  <div class="col-xs-4">
+			  <h:inputSecret class="form-control" value="#{createUser.password}"/>
+		  </div>
+	  </div>
+	  <h:commandButton class="btn btn-lg btn-success " action="#{createUser.createUserAction}" value="Create" />
+  </h:form>
+  <br/>
+  
+    <h:form>
+	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
+    <h:dataTable class="table table-striped" id="reportTable" value="#{admin.allEmployees}"
+                 var="emp">
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Name" />
+            </f:facet>
+            <h:outputText value="#{emp.name}" rendered="#{not admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.name}" rendered="#{admin.isEditing(emp)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Employee Id" />
+            </f:facet>
+            <h:outputText value="#{emp.empNumber}" rendered="#{not admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.empNumber}" rendered="#{admin.isEditing(emp)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="UserName" />
+            </f:facet>
+            <h:outputText value="#{emp.userName}" rendered="#{not admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.userName}" rendered="#{admin.isEditing(emp)}">
+                <f:validator validatorId="userName" />
+            </h:inputText>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Password" />
+            </f:facet>
+            <h:outputText value="#{admin.credentials[emp.userName]}" rendered="#{not admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{admin.credentials[emp.userName]}" rendered="#{admin.isEditing(emp)}"/>
+        </h:column>
+        <h:column>
+			<h:commandLink action="#{admin.editAction(emp)}" class="btn btn-default btn-sm btn-warning"
+				rendered="#{not admin.isEditing(emp)}">
+				<span class="glyphicon glyphicon-pencil"></span> Edit
+			</h:commandLink>
+		</h:column>
+        <h:column>
+			<h:commandLink action="#{admin.deleteAction(emp)}" type="button"
+				class="btn btn-default btn-sm btn-danger" >
+				<span class="glyphicon glyphicon-remove"></span> Remove
+			</h:commandLink>
+		</h:column>
+    </h:dataTable>
+    <h:commandButton class="btn btn-default btn-info" value="Save Changes" action="#{admin.saveAction}" />
+    
+    </h:form>
   
 </ui:define>
 </ui:composition>
