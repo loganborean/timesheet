@@ -4,17 +4,149 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:p="http://primefaces.org/ui"  
       xmlns:h="http://java.sun.com/jsf/html">
 <head><title></title></head>
 <body>
 <ui:composition template="/templates/base.xhtml">
 <ui:define name="content">
-
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">Timesheets</h1>
         </div>
     </div>
+
+	<h:form>
+		<h:commandLink action="#{timesheet.createTimesheetAction()}" type="button"
+			class="btn btn-default btn-sm btn-success" >
+			<span class="glyphicon glyphicon-plus"></span> Create New Timesheet
+		</h:commandLink>
+	</h:form>
+
+    <h:form>
+	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
+
+    <h:dataTable class="table table-striped" value="#{timesheet.currentSheet.details}"
+                 var="row">
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Project" />
+            </f:facet>
+            <h:outputText value="#{row.projectID}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="WP" />
+            </f:facet>
+            <h:outputText value="#{row.workPackage}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="MON" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[0]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[0]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="TUES" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[1]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[1]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="WED" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[2]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[2]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="THUR" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[3]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[3]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="FRI" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[4]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[4]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="SAT" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[5]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[5]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="SUN" />
+            </f:facet>
+            <h:outputText value="#{row.hoursForWeek[6]}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[6]}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Notes" />
+            </f:facet>
+            <h:outputText value="#{row.notes}" rendered="#{not timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.notes}" rendered="#{timesheet.isEditing(row)}"/>
+        </h:column>
+        <h:column>
+			<h:commandLink action="#{timesheet.editAction(row)}" class="btn btn-default btn-sm btn-warning"
+				rendered="#{not timesheet.isEditing(row)}">
+				<span class="glyphicon glyphicon-pencil"></span> Edit
+			</h:commandLink>
+		</h:column>
+        <h:column>
+			<h:commandLink action="#{timesheet.deleteAction(row)}" type="button"
+				class="btn btn-default btn-sm btn-danger" >
+				<span class="glyphicon glyphicon-remove"></span> Remove
+			</h:commandLink>
+		</h:column>
+    </h:dataTable>
+    <h:commandButton class="btn btn-default btn-info" value="Save Changes" action="#{timesheet.saveAction}" />
+    
+    </h:form>
+
+		<h1 class="page-header"></h1>
+
+  <h:form>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">Project</label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createSheetRow.projectID}"/>
+		  </div>
+	  </div>
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">WP</label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createSheetRow.workPackage}"/>
+		  </div>
+	  </div>
+	  <ui:repeat value="#{createSheetRow.hoursForWeek}" varStatus="loop">
+		  <div class="form-group row">
+			  <h:outputText class="col-xs-1 col-form-label" value="#{loop.index}" />
+			  <div class="col-xs-4">
+			    <h:inputText class="form-control" value="#{createSheetRow.hoursForWeek[loop.index]}" />
+			  </div>
+		  </div>
+	  </ui:repeat> 
+
+	  <div class="form-group row">
+		  <label class="col-xs-1 col-form-label">notes</label>
+		  <div class="col-xs-4">
+			  <h:inputText class="form-control" value="#{createSheetRow.notes}"/>
+		  </div>
+	  </div>
+	  <h:commandButton class="btn btn-lg btn-success " action="#{createSheetRow.createRowAction()}" value="Create" />
+  </h:form>
   
 </ui:define>
 </ui:composition>

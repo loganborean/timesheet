@@ -27,10 +27,19 @@ public class UserService implements Serializable {
 	
 	@Inject @NoDB private EmployeeList employeeList;
 	
-	public UserService() { }
+	public UserService() { 
+	}
 
 	public boolean isLoggedIn() {
 		return currentEmployee != null;
+	}
+	
+	public Employee getCurrentEmployee() {
+		return this.currentEmployee;
+	}
+	
+	public void setCurrentEmployee(Employee e) {
+		this.currentEmployee = e;
 	}
 
 	public String loginAction() {
@@ -38,11 +47,12 @@ public class UserService implements Serializable {
 		Credentials cred = makeCredentials();
 		if (employeeList.verifyUser(cred)) {
 			Employee employee = findEmployeeByUsername(cred.getUserName());
-			if (isAdmin(employee)) {
-				//current user is admin
-			}
 			setCurrentEmployee(employee);
-			return "admin.xhtml?faces-redirect=true";
+			if (isAdmin()) {
+				//current user is admin
+				return "admin.xhtml?faces-redirect=true";
+			}
+			return "timesheet";
 		}
 		return "login";
 
@@ -61,14 +71,8 @@ public class UserService implements Serializable {
 		return "login.xhtml?faces-redirect=true";
 	}
 	
-	
-	public void setCurrentEmployee(Employee emp) {
-		currentEmployee = emp;
-	}
-	
-	private boolean isAdmin(Employee emp) {
-		return emp.getEmpNumber() == employeeList.getAdministrator().getEmpNumber();
-		
+	public boolean isAdmin() {
+		return currentEmployee.getEmpNumber() == employeeList.getAdministrator().getEmpNumber();
 	}
 	
 	private Employee findEmployeeByUsername(String username) {

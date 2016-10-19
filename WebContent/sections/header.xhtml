@@ -10,7 +10,7 @@
 
 <div id="wrapper">
     <!-- Navigation -->
-    <div class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <div class="navbar navbar-default navbar-static-top" style="margin-bottom: 0">
         <!-- /.navbar-header -->
         <div class="container-fluid">
             <div class="navbar-header">
@@ -19,10 +19,14 @@
             <h:panelGroup layout="block" rendered="#{user.loggedIn}">
             <ul class="nav navbar-nav">
 				<li><h:link class="nav-item" value="sheets" outcome="timesheet" /></li>
-				<li><h:link class="nav-item" value="Admin" outcome="admin" /></li>
+
+				<!-- /.if logged in -->
+
+				<h:panelGroup layout="block" rendered="#{user.isAdmin()}">
+					<li><h:link class="nav-item" value="Admin" outcome="admin" /></li>
+				</h:panelGroup>
             </ul>
             </h:panelGroup>
-        <!-- /.if logged in -->
         <!--
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/pages/logoutAction"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
