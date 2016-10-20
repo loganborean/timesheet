@@ -73,7 +73,12 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
 	@Override
 	public boolean verifyUser(Credentials credential) {
-		return (loginCombos.get(credential.getUserName())).equals(credential.getPassword());
+		String dbPass = loginCombos.get(credential.getUserName());
+		if (dbPass == null) {
+			System.out.println("fuck off");
+			return false;
+		}
+		return dbPass.equals(credential.getPassword());
 	}
 
 	@Override

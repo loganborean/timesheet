@@ -92,6 +92,18 @@ public class TimesheetService implements Serializable {
 		return false;
 		
 	}
+	
+	public boolean hasCurrentTimesheet() {
+		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
+		
+		for(Timesheet sheet : sheetsForUser) {
+			if (sheet.getWeekNumber() == getCurrentWeekNum()) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
 
 	public String previousSheetAction() {
 		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
@@ -209,7 +221,7 @@ public class TimesheetService implements Serializable {
 		rowss.add(new TimesheetRow(3,"wp3", t3, "comments3"));
 
 		Timesheet sheet = new Timesheet(user.getCurrentEmployee(), 
-									    getLastDayOfWeekDate(), rowss); 
+									    getOneWeekBefore(getLastDayOfWeekDate()), rowss); 
 		sheetCollection.addTimesheet(sheet);
 
 		List<Timesheet> sheets = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
@@ -224,7 +236,30 @@ public class TimesheetService implements Serializable {
         newDate.setTime(calendar.getTime().getTime());
 
         return newDate;
+	}
+
+	private Date getOneWeekBefore(Date week) {
+        Date newDate = new Date(week.getTime());
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(newDate);
+        calendar.add(Calendar.DATE, -7);
+        newDate.setTime(calendar.getTime().getTime());
+
+        return newDate;
+	}
+
+	public BigDecimal getTotalForDay(int day_index) {
 		
+		BigDecimal total = BigDecimal.ZERO;
+		for(TimesheetRow row : currentSheet.getDetails()) {
+			BigDecimal hour = row.getHour(day_index);
+			if (hour != null) {
+				total = total.add(hour);
+			} 
+				
+		}
+	
+		return total;
 	}
 
     public static Date getLastDayOfWeekDate() {

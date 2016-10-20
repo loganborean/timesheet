@@ -23,38 +23,39 @@
  <p:commandLink value="+ Create User" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" /> 
 </h:form>
  
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <h:form id="myForm">
                 <div class="modal-header">
-                    <h4 class="modal-title">Test Modal</h4>
+                    <h4 class="modal-title">Create Employee</h4>
                 </div>
                 <div class="modal-body">
                 
                 
                 
+	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Name: </label>
-		  <div class="col-xs-4">
+		  <div class="col-xs-7">
 			  <h:inputText class="form-control" value="#{createUser.name}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Employee Id: </label>
-		  <div class="col-xs-4">
+		  <div class="col-xs-7">
 			  <h:inputText class="form-control" value="#{createUser.empId}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Username: </label>
-		  <div class="col-xs-4">
+		  <div class="col-xs-7">
 			  <h:inputText class="form-control" value="#{createUser.username}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Password: </label>
-		  <div class="col-xs-4">
+		  <div class="col-xs-7">
 			  <h:inputSecret class="form-control" value="#{createUser.password}"/>
 		  </div>
 	  </div>
