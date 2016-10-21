@@ -61,17 +61,16 @@
 			<h:outputText value="#{timesheet.currentSheet.getWeekEnding()}" />
 		  </div>
 	  </div>
-  <h:outputText value="&lt;br/&gt;" escape="false" />
+    <h:outputText value="&lt;br/&gt;" escape="false" />
 	  
 
 	<h:outputText class="alert alert-warning" value="Warning: You can only edit the Timesheet for the current week"
 	              rendered="#{not timesheet.canEdit()}" />
 	<h:outputText value="&lt;br/&gt;" escape="false" />
 <h:form>
- <p:commandLink value="+ Create Row" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" style="margin-top: 23px;"/> 
+ <p:commandLink value="+ Create Row" rendered="${timesheet.canEdit()}" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" style="margin-top: 23px;"/> 
 </h:form>
 	<h:outputText value="&lt;br/&gt;" escape="false" />
-
 	<h:messages class="alert alert-danger" style="list-style-type: none; margin-bottom: 10px;"/>
     <h:form>
 
@@ -109,7 +108,7 @@
                 <h:outputText value="MON" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[0]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[0]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control" value="#{row.hoursForWeek[0]}" validator="#{validator.validateHours}" rendered="#{timesheet.isEditing(row)}"/>
             <!-- sum monday -->
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(0)}" />

@@ -38,33 +38,32 @@
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Name: </label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createUser.name}"/>
+			  <h:inputText class="form-control" validator="#{validator.validateName}" value="#{createUser.name}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Employee Id: </label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createUser.empId}"/>
+			  <h:inputText class="form-control" validator="#{validator.validateEmpId}" value="#{createUser.empId}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Username: </label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createUser.username}"/>
+			  <h:inputText class="form-control" validator="#{validator.validateUsername}" value="#{createUser.username}">
+                <f:validator validatorId="userName" />
+			  </h:inputText>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Password: </label>
 		  <div class="col-xs-7">
-			  <h:inputSecret class="form-control" value="#{createUser.password}"/>
+			  <h:inputSecret class="form-control" validator="#{validator.validatePassword}" value="#{createUser.password}"/>
 		  </div>
 	  </div>
-                
-                
-                
                 </div>
                 <h:panelGroup layout="block" styleClass="modal-footer">
-                    <p:commandLink value="Close" immediate="true" styleClass="btn btn-default" oncomplete="$('#myModal').modal('hide');" />
+	  <p:commandLink value="Close" immediate="true" styleClass="btn btn-default" oncomplete="$('#myModal').modal('hide');" />
 	  <h:commandButton class="btn btn-md btn-success " action="#{createUser.createUserAction}" value="Create" />
                 </h:panelGroup>
             </h:form>
@@ -72,12 +71,11 @@
     </div>
 </div> 
     
-    
-    
   <br/>
+    
   
     <h:form>
-	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
+  	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
     <h:dataTable class="table table-striped" id="reportTable" value="#{admin.allEmployees}"
                  var="emp">
         <h:column>
@@ -85,30 +83,28 @@
                 <h:outputText value="Name" />
             </f:facet>
             <h:outputText value="#{emp.name}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.name}" rendered="#{admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.name}" validator="#{validator.validateName}" rendered="#{admin.isEditing(emp)}"/>
         </h:column>
         <h:column>
             <f:facet name="header">
                 <h:outputText value="Employee Id" />
             </f:facet>
             <h:outputText value="#{emp.empNumber}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.empNumber}" rendered="#{admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.empNumber}" validator="#{validator.validateEmpId}" rendered="#{admin.isEditing(emp)}"/>
         </h:column>
         <h:column>
             <f:facet name="header">
                 <h:outputText value="UserName" />
             </f:facet>
             <h:outputText value="#{emp.userName}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.userName}" rendered="#{admin.isEditing(emp)}">
-                <f:validator validatorId="userName" />
-            </h:inputText>
+            <h:inputText class="form-control" value="#{emp.userName}" validator="#{validator.validateUsername}" rendered="#{admin.isEditing(emp)}"/>
         </h:column>
         <h:column>
             <f:facet name="header">
                 <h:outputText value="Password" />
             </f:facet>
             <h:outputText value="#{admin.credentials[emp.userName]}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{admin.credentials[emp.userName]}" rendered="#{admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{admin.credentials[emp.userName]}" validator="#{validator.validatePassword}" rendered="#{admin.isEditing(emp)}"/>
         </h:column>
         <h:column>
 			<h:commandLink action="#{admin.editAction(emp)}" class="btn btn-default btn-sm btn-warning"

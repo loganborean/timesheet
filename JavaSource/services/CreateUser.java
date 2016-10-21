@@ -33,7 +33,6 @@ public class CreateUser implements Serializable {
 		employeeList.addEmployee(newEmp);
 		
 		return "admin";
-		
 	}
 	
 	public String getName() {
