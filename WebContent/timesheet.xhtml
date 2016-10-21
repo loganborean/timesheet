@@ -75,14 +75,15 @@
     <h:form>
 
 
-    <h:dataTable class="table table-striped" value="#{timesheet.currentSheet.details}"
-                 var="row">
+
+    <h:dataTable class="table table-striped" value="#{timesheet.currentSheet.details}" type="none"
+				  var="row">
         <h:column>
             <f:facet name="header">
                 <h:outputText value="Project" />
             </f:facet>
             <h:outputText value="#{row.projectID}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText id="projID" required="true" class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="Total" />
 			</f:facet>	
@@ -92,7 +93,10 @@
                 <h:outputText value="WP" />
             </f:facet>
             <h:outputText value="#{row.workPackage}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText class="form-control"  validator="#{validator.validateWP}" required="true" value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}">
+				<f:attribute name="currentRow" value="#{row}" /> 
+            </h:inputText>
+            
         </h:column>
         <h:column>
             <f:facet name="header">
