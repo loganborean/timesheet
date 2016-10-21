@@ -147,6 +147,19 @@ public class Validator implements Serializable {
 
 	}
 
+	public void validateNotes(FacesContext context, UIComponent componentToValidate, 
+												    Object value) throws ValidatorException {
+		String notes = (String) value;
+		
+
+		if (notes.length() > 100) {
+			throw new ValidatorException(
+				new FacesMessage("notes must be less than 100 characters"));
+		}
+
+	}
+
+
 	public void validateWP(FacesContext context, UIComponent componentToValidate, 
 												    Object value) throws ValidatorException {
 
@@ -172,8 +185,11 @@ public class Validator implements Serializable {
 
 		List<TimesheetRow> rows = sheetService.getCurrentSheet().getDetails();
 		UIInput proj = (UIInput) componentToValidate.findComponent("projID");
-		
-		int projectId = ((Integer) proj.getLocalValue()).intValue();
+		Integer id = (Integer) proj.getLocalValue();
+
+		if (id == null) return;
+
+		int projectId = id.intValue();
 		
 		TimesheetRow currentlyEditingRow = (TimesheetRow) componentToValidate.getAttributes().get("currentRow"); 
 
@@ -189,6 +205,25 @@ public class Validator implements Serializable {
 			}
 		}
 	}
+	
+	public void validateProjID(FacesContext context, UIComponent componentToValidate, 
+												       Object value) throws ValidatorException {
+		
+
+		Integer empId = (Integer) value;
+
+		if (empId == null) {
+			throw new ValidatorException(
+				new FacesMessage("You must enter a project id"));
+		}
+
+		if (empId < 10 || empId > 99999999) {
+			throw new ValidatorException(
+				new FacesMessage("project ID must be between 2 and 8 characters"));
+		}
+
+	}
+	
 
 
 }

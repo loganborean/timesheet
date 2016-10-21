@@ -15,6 +15,7 @@ import ca.bcit.infosys.employee.EmployeeList;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 @Named("user") 
@@ -49,13 +50,14 @@ public class UserService implements Serializable {
 			Employee employee = findEmployeeByUsername(cred.getUserName());
 			setCurrentEmployee(employee);
 			if (isAdmin()) {
-				//current user is admin
 				return "admin.xhtml?faces-redirect=true";
 			}
 			return "timesheet";
 		}
-		return "login";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage( null, new FacesMessage( "Invalid username/password" ));
 
+		return "login";
 	}
 	
 	public void createUserAction() {

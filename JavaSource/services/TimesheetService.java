@@ -28,7 +28,7 @@ public class TimesheetService implements Serializable {
 
 	private Timesheet currentSheet;
 	
-	private List<TimesheetRow> editable;
+	private TimesheetRow editable;
 	
 	public UserService getUser() {
 		return user;
@@ -137,12 +137,17 @@ public class TimesheetService implements Serializable {
 	}
 	
 	public TimesheetService() {
-		editable = new ArrayList<TimesheetRow>();
+		editable = null;
 	}
 
 	public boolean isEditing(TimesheetRow row) {
 		//false if the emp is not in the editable list
-		return editable.indexOf(row) != -1;
+		return editable == row;
+	}
+
+	public boolean isEditingMode() {
+		//false if the emp is not in the editable list
+		return editable != null;
 	}
 	
 	public boolean canEdit() {
@@ -160,12 +165,12 @@ public class TimesheetService implements Serializable {
 	}
 
 	public String editAction(TimesheetRow row) {
-		editable.add(row);
+		editable = row;
 		return "timesheet";
 	}
 	
 	public void clearEditable() {
-		editable.clear();
+		editable = null;
 	}
 
 	public String deleteAction(TimesheetRow row) {
@@ -205,27 +210,60 @@ public class TimesheetService implements Serializable {
 		return "timesheet?faces-redirect=true";
 	}
 
+	/**
+	 * This is used to create sample data for each employee
+	 * it is the timesheet for the PREVIOUS week, allowing you to create a new timesheet when
+	 * first using the application
+	 */
 	@PostConstruct
 	private void init() {
 		List<TimesheetRow> rowss = new ArrayList<TimesheetRow>();
-
-		BigDecimal[] t1 = {new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")
-						, new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")};
-		BigDecimal[] t2 = {new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")
-						, new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")};
-		BigDecimal[] t3 = {new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")
-						, new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")};
-
-		rowss.add(new TimesheetRow(1,"wp1", t1, "comments1"));
-		rowss.add(new TimesheetRow(2,"wp2", t2, "comments2"));
-		rowss.add(new TimesheetRow(3,"wp3", t3, "comments3"));
-
-		Timesheet sheet = new Timesheet(user.getCurrentEmployee(), 
-									    getOneWeekBefore(getLastDayOfWeekDate()), rowss); 
-		sheetCollection.addTimesheet(sheet);
-
 		List<Timesheet> sheets = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		currentSheet = sheets.get(0);
+
+		System.out.println("~~~~~~~~~~~~~~~~~~`" + sheets.size());
+		if(sheets.size() == 0) {
+			BigDecimal[] t1 = {new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")
+							, new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")};
+			BigDecimal[] t2 = {new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")
+							, new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")};
+			BigDecimal[] t3 = {new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")
+							, new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")};
+			BigDecimal[] t4 = {new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0")
+							, new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0")};
+			BigDecimal[] t5 = {new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0")
+							, new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0")};
+
+			rowss.add(new TimesheetRow(1,"wp1", t1, "comments1"));
+			rowss.add(new TimesheetRow(2,"wp2", t2, "comments2"));
+			rowss.add(new TimesheetRow(3,"wp3", t3, "comments3"));
+			rowss.add(new TimesheetRow(4,"wp4", t4, "comments4"));
+			rowss.add(new TimesheetRow(5,"wp5", t5, "comments5"));
+
+			Timesheet sheet = new Timesheet(user.getCurrentEmployee(), 
+											getOneWeekBefore(getLastDayOfWeekDate()), rowss); 
+			sheetCollection.addTimesheet(sheet);
+
+			currentSheet = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee()).get(0);
+
+		} else {
+			//make currentSheet the current week
+			currentSheet = getLatestSheet();
+		}
+
+			
+	}
+	private Timesheet getLatestSheet() {
+		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
+		
+		Timesheet latestSheet = sheetsForUser.get(0);
+		
+		for(Timesheet sheet : sheetsForUser) {
+			sheet.getEndWeek().after(latestSheet.getEndWeek());
+			latestSheet = sheet;
+		}
+		
+		return latestSheet;
+		
 	}
 	
 	private Date getOneWeekAfter(Date week) {

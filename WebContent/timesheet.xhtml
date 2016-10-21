@@ -68,13 +68,11 @@
 	              rendered="#{not timesheet.canEdit()}" />
 	<h:outputText value="&lt;br/&gt;" escape="false" />
 <h:form>
- <p:commandLink value="+ Create Row" rendered="${timesheet.canEdit()}" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" style="margin-top: 23px;"/> 
+ <p:commandLink value="+ Create Row" rendered="#{timesheet.canEdit()}" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" style="margin-top: 23px;"/> 
 </h:form>
 	<h:outputText value="&lt;br/&gt;" escape="false" />
 	<h:messages class="alert alert-danger" style="list-style-type: none; margin-bottom: 10px;"/>
     <h:form>
-
-
 
     <h:dataTable class="table table-striped" value="#{timesheet.currentSheet.details}" type="none"
 				  var="row">
@@ -83,7 +81,7 @@
                 <h:outputText value="Project" />
             </f:facet>
             <h:outputText value="#{row.projectID}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText id="projID" required="true" class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Project ID" id="projID"  validator="#{validator.validateProjID}" class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="Total" />
 			</f:facet>	
@@ -93,7 +91,7 @@
                 <h:outputText value="WP" />
             </f:facet>
             <h:outputText value="#{row.workPackage}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control"  validator="#{validator.validateWP}" required="true" value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}">
+            <h:inputText class="form-control"  validator="#{validator.validateWP}"  value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}">
 				<f:attribute name="currentRow" value="#{row}" /> 
             </h:inputText>
             
@@ -112,7 +110,7 @@
                 <h:outputText value="MON" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[0]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[0]}" validator="#{validator.validateHours}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[0]}" validator="#{validator.validateHours}" rendered="#{timesheet.isEditing(row)}"/>
             <!-- sum monday -->
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(0)}" />
@@ -123,7 +121,7 @@
                 <h:outputText value="TUES" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[1]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[1]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[1]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(1)}" />
 			</f:facet>	
@@ -133,7 +131,7 @@
                 <h:outputText value="WED" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[2]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[2]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[2]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(2)}" />
 			</f:facet>	
@@ -143,7 +141,7 @@
                 <h:outputText value="THUR" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[3]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[3]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[3]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(3)}" />
 			</f:facet>	
@@ -153,7 +151,7 @@
                 <h:outputText value="FRI" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[4]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[4]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[4]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(4)}" />
 			</f:facet>	
@@ -163,7 +161,7 @@
                 <h:outputText value="SAT" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[5]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[5]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[5]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(5)}" />
 			</f:facet>	
@@ -173,7 +171,7 @@
                 <h:outputText value="SUN" />
             </f:facet>
             <h:outputText value="#{row.hoursForWeek[6]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.hoursForWeek[6]}" rendered="#{timesheet.isEditing(row)}"/>
+            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[6]}" rendered="#{timesheet.isEditing(row)}"/>
 			<f:facet name="footer">
 				<h:outputText value="#{timesheet.getTotalForDay(6)}" />
 			</f:facet>	
@@ -187,13 +185,13 @@
         </h:column>
         <h:column>
 			<h:commandLink action="#{timesheet.editAction(row)}" class="btn btn-default btn-sm btn-warning"
-				rendered="#{not timesheet.isEditing(row) and timesheet.canEdit()}">
+				rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
 				<span class="glyphicon glyphicon-pencil"></span> Edit
 			</h:commandLink>
 		</h:column>
         <h:column>
 			<h:commandLink action="#{timesheet.deleteAction(row)}" type="button"
-				class="btn btn-default btn-sm btn-danger" rendered="#{timesheet.canEdit()}">
+				class="btn btn-default btn-sm btn-danger" rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
 				<span class="glyphicon glyphicon-remove"></span> Remove
 			</h:commandLink>
 		</h:column>
@@ -218,25 +216,24 @@
                 <div class="modal-body">
                 
                 
-                
 	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Project</label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createSheetRow.projectID}"/>
+			  <h:inputText class="form-control"  validator="#{validator.validateProjID}" value="#{createSheetRow.projectID}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">WP</label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createSheetRow.workPackage}"/>
+			  <h:inputText class="form-control" validator="#{validator.validateWP}" value="#{createSheetRow.workPackage}"/>
 		  </div>
 	  </div>
 	  <ui:repeat value="#{createSheetRow.hoursForWeek}" varStatus="loop">
 		  <div class="form-group row">
 			  <h:outputText class="col-xs-4 col-form-label" value="#{loop.index}" />
 			  <div class="col-xs-7">
-			    <h:inputText class="form-control" value="#{createSheetRow.hoursForWeek[loop.index]}" />
+			    <h:inputText class="form-control" validator="#{validator.validateHours}" value="#{createSheetRow.hoursForWeek[loop.index]}" />
 			  </div>
 		  </div>
 	  </ui:repeat> 
@@ -244,7 +241,7 @@
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">notes</label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" value="#{createSheetRow.notes}"/>
+			  <h:inputText class="form-control" validator="#{validator.validateNotes}" value="#{createSheetRow.notes}"/>
 		  </div>
 	  </div>
                 

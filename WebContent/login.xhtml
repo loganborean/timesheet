@@ -17,6 +17,7 @@
     </div>
    <div class="container">
     <div class="row vertical-offset-100">
+	<h:messages class="alert alert-danger" style="list-style-type: none; margin-bottom: 10px;"/>
         <div class="col-md-6 col-md-offset-1">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -32,8 +33,6 @@
                                 <h:inputSecret class="form-control" a:placeholder="Password" value="#{user.password}"/>
                             </div>
                             <h:commandButton class="btn btn-lg btn-success btn-block" value="Submit" action="#{user.loginAction}"/>
-                            <label> Don't have an account?</label>
-                            <a href="/pages/signup">Sign up</a>
                         </fieldset>
                     </h:form >
                 </div>
