@@ -11,102 +11,111 @@ import java.util.Map.Entry;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 
-import annotations.NoDB;
+import annotations.NoDBempl;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 
-@NoDB
+/**
+ * Implementation of ca.bcit.infosys.employee.EmployeeList acting as a data
+ * access object for a simulated database. The "database" is simply the instance
+ * variables.
+ */
+@NoDBempl
 @ApplicationScoped
 public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
-	/**
-	 * username, password
-	 */
-	Map<String, String> loginCombos;
-	
-	List<Employee> employees;
-	Employee administrator;
-	Employee currentEmployee;
-	
-	public EmployeeListNoDBimpl() {
-		loginCombos = new HashMap<String, String>();
-		employees = new ArrayList<Employee>();
-		
-		/* initialize test values for and administrator */
-		administrator = new Employee("logan", 1111, "admin");
-		
-						//username, paassword
-		loginCombos.put("admin", "aaaaa");
-		employees.add(administrator);
-	}
-	
-	@Override
+    /** A map of all the valid login combos. */
+    private Map<String, String> loginCombos;
+    /** A list of employees. */
+    private List<Employee> employees;
+
+    /** The administrator of the application. */
+    private Employee administrator;
+
+    /**
+     * Constructor. Initializes dummy values for an admin.
+     */
+    public EmployeeListNoDBimpl() {
+        loginCombos = new HashMap<String, String>();
+        employees = new ArrayList<Employee>();
+
+        /* initialize test values for administrator */
+        administrator = new Employee("logan", 1111, "admin");
+        loginCombos.put("admin", "aaaaa");
+        employees.add(administrator);
+    }
+
+    /**
+     * Sets the login combos.
+     */
     public void setLoginCombos(Credentials cred) {
-		loginCombos.put(cred.getUserName(), cred.getPassword());
-	}
+        loginCombos.put(cred.getUserName(), cred.getPassword());
+    }
 
-	@Override
-	public List<Employee> getEmployees() {
-		return this.employees;
-	}
+    /**
+     * Returns all employees.
+     * @Return the list of employees.
+     */
+    public List<Employee> getEmployees() {
+        return this.employees;
+    }
 
-	@Override
-	public Employee getEmployee(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Map<String, String> getLoginCombos() {
-		// TODO Auto-generated method stub
-		return loginCombos;
-	}
+    /**
+     * Returns the valid login combos.
+     * @return the map of the login combos.
+     */
+    public Map<String, String> getLoginCombos() {
+        return loginCombos;
+    }
 
-	@Override
-	public Employee getCurrentEmployee() {
-		return null;
-	}
 
-	@Override
-	public Employee getAdministrator() {
-		return administrator;
-	}
+    /**
+     * Returns the administrator.
+     * @return the administrator.
+     */
+    public Employee getAdministrator() {
+        return administrator;
+    }
 
-	@Override
-	public boolean verifyUser(Credentials credential) {
-		String dbPass = loginCombos.get(credential.getUserName());
-		if (dbPass == null) {
-			System.out.println("fuck off");
-			return false;
-		}
-		return dbPass.equals(credential.getPassword());
-	}
+    /**
+     * Verify a credential.
+     * @param credential the credential to be verified.
+     * @return boolean whether user is validated.
+     */
+    public boolean verifyUser(final Credentials credential) {
+        String dbPass = loginCombos.get(credential.getUserName());
+        if (dbPass == null) {
+            return false;
+        }
+        return dbPass.equals(credential.getPassword());
+    }
 
-	@Override
-	public String logout(Employee employee) {
-		return null;
-	}
+    /**
+     * Deletes an employee.
+     * @param userToDelete the user to delete.
+     */
+    public void deleteEmpoyee(final Employee userToDelete) {
+        // delete employee
+        Iterator<Employee> iter = employees.iterator();
+        while (iter.hasNext()) {
+            Employee emp = iter.next();
+            if (userToDelete == emp) {
+                iter.remove();
+            }
+        }
 
-	@Override // has side effect -- delete login combos
-	public void deleteEmpoyee(Employee userToDelete) {
-		//delete employee
-		Iterator<Employee> iter = employees.iterator();
-		while (iter.hasNext()) {
-		    Employee emp = iter.next();
-		    if (userToDelete == emp) {
-		        iter.remove();
-		    }
-		}
+        // delete their login credentials
+        loginCombos.remove(userToDelete.getUserName());
+    }
 
-		//delete their login credentials 
-		loginCombos.remove(userToDelete.getUserName());
-	}
+    /**
+     * @param newEmployee the employee to add.
+     */
+    public void addEmployee(final Employee newEmployee) {
+        employees.add(newEmployee);
+    }
 
-	@Override
-	public void addEmployee(Employee newEmployee) {
-		employees.add(newEmployee);
-	}
-	
 
 }

@@ -17,7 +17,7 @@ import javax.inject.Named;
 
 import org.primefaces.component.datatable.DataTable;
 
-import annotations.NoDB;
+import annotations.NoDBempl;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.TimesheetRow;
@@ -27,7 +27,7 @@ import services.TimesheetService;
 @SessionScoped
 public class Validator implements Serializable {
 	
-	@Inject @NoDB private EmployeeList employeeList;
+	@Inject @NoDBempl private EmployeeList employeeList;
 
 	@Inject TimesheetService sheetService;
 

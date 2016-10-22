@@ -13,10 +13,14 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+/**
+ * Annotates the no-database implementation of employeeList interface.
+ *
+ */
 @Qualifier
 @Target({ANNOTATION_TYPE, TYPE, METHOD, FIELD, PARAMETER})
 @Documented
 @Retention(RUNTIME)
-public @interface NoDB {
+public @interface NoDBempl {
 
 }

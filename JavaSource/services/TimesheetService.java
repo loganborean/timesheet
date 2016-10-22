@@ -23,250 +23,369 @@ import dao.TimesheetCollectionNoDBimpl;
 @SessionScoped
 public class TimesheetService implements Serializable {
 
-	@Inject @NoDBsheets TimesheetCollectionNoDBimpl sheetCollection;
-	@Inject UserService user;
+    /** DAO for the saved timesheets. */
+    @Inject
+    @NoDBsheets
+    private TimesheetCollectionNoDBimpl sheetCollection;
 
-	private Timesheet currentSheet;
-	
-	private TimesheetRow editable;
-	
-	public UserService getUser() {
-		return user;
-	}
+    /** The bean handling the current user. */
+    @Inject
+    private UserService user;
 
-	public String nextSheetAction() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		List<Timesheet> sheetsAfterCurrent = new ArrayList<Timesheet>();
-		
-		Date currentSheetWeek = currentSheet.getEndWeek();
-				
-		for(Timesheet sheet : sheetsForUser) {
-			//find the last week
-			if (sheet.getEndWeek().after(currentSheetWeek)) {
-				sheetsAfterCurrent.add(sheet);
-			}
-		}
+    /** The current sheet being displayed. */
+    private Timesheet currentSheet;
 
-		if (sheetsAfterCurrent.size() <= 0)
-			return null;
+    /** The row being edited. */
+    private TimesheetRow editable;
 
-		Date smallestWeek = sheetsAfterCurrent.get(0).getEndWeek();
-		Timesheet nextSheet = sheetsAfterCurrent.get(0);
+    /**
+     * Returns the user service.
+     * @return the user service.
+     */
+    public UserService getUser() {
+        return user;
+    }
 
-		for(Timesheet sheet : sheetsAfterCurrent) {
-			//find the last week
-			if (sheet.getEndWeek().before(smallestWeek)) {
-				smallestWeek = sheet.getEndWeek();
-				nextSheet = sheet;
-			}
-		}
-		currentSheet = nextSheet;
+    /**
+     * constructor.
+     */
+    public TimesheetService() {
+        editable = null;
+    }
 
-		return "timesheet?faces-redirect=true";
-	}
-	
-	public boolean hasNextSheet() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		Date currentSheetWeek = currentSheet.getEndWeek();
-				
-		for(Timesheet sheet : sheetsForUser) {
-			//find the last week
-			if (sheet.getEndWeek().after(currentSheetWeek)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+    /**
+     * This is used to create sample data for each employee it is the timesheet
+     * for the PREVIOUS week, allowing you to create a new timesheet when first
+     * using the application.
+     */
+    @PostConstruct
+    private void init() {
+        List<TimesheetRow> rowss = new ArrayList<TimesheetRow>();
+        List<Timesheet> sheets =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
 
-	public boolean hasPreviousSheet() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		Date currentSheetWeek = currentSheet.getEndWeek();
-				
-		for(Timesheet sheet : sheetsForUser) {
-			//find the last week
-			if (sheet.getEndWeek().before(currentSheetWeek)) {
-				return true;
-			}
-		}
-		return false;
-		
-	}
-	
-	public boolean hasCurrentTimesheet() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		
-		for(Timesheet sheet : sheetsForUser) {
-			if (sheet.getWeekNumber() == getCurrentWeekNum()) {
-				return true;
-			}
-		}
-		return false;
-		
-	}
+        if (sheets.size() == 0) {
+            BigDecimal[] t1 = {new BigDecimal("1.0"), new BigDecimal("1.0"),
+                    new BigDecimal("1.0"), new BigDecimal("1.0"),
+                    new BigDecimal("1.0"), new BigDecimal("1.0"),
+                    new BigDecimal("1.0") };
+            BigDecimal[] t2 = {new BigDecimal("2.0"), new BigDecimal("2.0"),
+                    new BigDecimal("2.0"), new BigDecimal("2.0"),
+                    new BigDecimal("2.0"), new BigDecimal("2.0"),
+                    new BigDecimal("2.0") };
+            BigDecimal[] t3 = {new BigDecimal("3.0"), new BigDecimal("3.0"),
+                    new BigDecimal("3.0"), new BigDecimal("3.0"),
+                    new BigDecimal("3.0"), new BigDecimal("3.0"),
+                    new BigDecimal("3.0") };
+            BigDecimal[] t4 = {new BigDecimal("4.0"), new BigDecimal("4.0"),
+                    new BigDecimal("4.0"), new BigDecimal("4.0"),
+                    new BigDecimal("4.0"), new BigDecimal("4.0"),
+                    new BigDecimal("4.0") };
+            BigDecimal[] t5 = {new BigDecimal("5.0"), new BigDecimal("5.0"),
+                    new BigDecimal("5.0"), new BigDecimal("5.0"),
+                    new BigDecimal("5.0"), new BigDecimal("5.0"),
+                    new BigDecimal("5.0") };
 
-	public String previousSheetAction() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		List<Timesheet> sheetsBeforeCurrent = new ArrayList<Timesheet>();
-		
-		Date currentSheetWeek = currentSheet.getEndWeek();
-				
-		for(Timesheet sheet : sheetsForUser) {
-			//find the last week
-			if (sheet.getEndWeek().before(currentSheetWeek)) {
-				sheetsBeforeCurrent.add(sheet);
-			}
-		}
+            rowss.add(new TimesheetRow(1, "wp1", t1, "comments1"));
+            rowss.add(new TimesheetRow(2, "wp2", t2, "comments2"));
+            rowss.add(new TimesheetRow(3, "wp3", t3, "comments3"));
+            rowss.add(new TimesheetRow(4, "wp4", t4, "comments4"));
+            rowss.add(new TimesheetRow(5, "wp5", t5, "comments5"));
 
-		if (sheetsBeforeCurrent.size() <= 0)
-			return null;
+            Timesheet sheet =
+                    new Timesheet(user.getCurrentEmployee(),
+                            getOneWeekBefore(getLastDayOfWeekDate()), rowss);
+            sheetCollection.addTimesheet(sheet);
 
-		Date largestWeek = sheetsBeforeCurrent.get(0).getEndWeek();
-		Timesheet nextSheet = sheetsBeforeCurrent.get(0);
+            currentSheet =
+                    sheetCollection.getTimesheetsForEmployee(
+                            user.getCurrentEmployee()).get(0);
 
-		for(Timesheet sheet : sheetsBeforeCurrent) {
-			//find the last week
-			if (sheet.getEndWeek().after(largestWeek)) {
-				largestWeek = sheet.getEndWeek();
-				nextSheet = sheet;
-			}
-		}
-		currentSheet = nextSheet;
+        } else {
+            // make currentSheet the current week
+            currentSheet = getLatestSheet();
+        }
 
-		return "timesheet?faces-redirect=true";
-	}
-	
-	public TimesheetService() {
-		editable = null;
-	}
+    }
 
-	public boolean isEditing(TimesheetRow row) {
-		//false if the emp is not in the editable list
-		return editable == row;
-	}
+    /**
+     * Sets the current sheet to the next latest sheet.
+     * @return the next page to navigate to.
+     */
+    public String nextSheetAction() {
 
-	public boolean isEditingMode() {
-		//false if the emp is not in the editable list
-		return editable != null;
-	}
-	
-	public boolean canEdit() {
-		//only if its the current week
-		return (currentSheet.getWeekNumber() == getCurrentWeekNum());
-	}
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
 
-	public int getCurrentWeekNum() {
+        List<Timesheet> sheetsAfterCurrent = new ArrayList<Timesheet>();
+
+        Date currentSheetWeek = currentSheet.getEndWeek();
+
+        for (Timesheet sheet : sheetsForUser) {
+            // find the last week
+            if (sheet.getEndWeek().after(currentSheetWeek)) {
+                sheetsAfterCurrent.add(sheet);
+            }
+        }
+
+        if (sheetsAfterCurrent.size() <= 0) {
+            return null;
+        }
+
+        Date smallestWeek = sheetsAfterCurrent.get(0).getEndWeek();
+        Timesheet nextSheet = sheetsAfterCurrent.get(0);
+
+        for (Timesheet sheet : sheetsAfterCurrent) {
+            // find the last week
+            if (sheet.getEndWeek().before(smallestWeek)) {
+                smallestWeek = sheet.getEndWeek();
+                nextSheet = sheet;
+            }
+        }
+        currentSheet = nextSheet;
+
+        return "timesheet?faces-redirect=true";
+    }
+
+    /**
+     * Returns whether there is another sheet at a later date than the current.
+     * @return whether the sheet exitsts.
+     */
+    public boolean hasNextSheet() {
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
+
+        Date currentSheetWeek = currentSheet.getEndWeek();
+
+        for (Timesheet sheet : sheetsForUser) {
+            // find the last week
+            if (sheet.getEndWeek().after(currentSheetWeek)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether there is another sheet at an earlier
+     * date than the current.
+     * @return whether the sheet exists.
+     */
+    public boolean hasPreviousSheet() {
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
+        Date currentSheetWeek = currentSheet.getEndWeek();
+
+        for (Timesheet sheet : sheetsForUser) {
+            // find the last week
+            if (sheet.getEndWeek().before(currentSheetWeek)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether a timesheet exists for the current week.
+     * @return whether the timesheet exists.
+     */
+    public boolean hasCurrentTimesheet() {
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
+
+        for (Timesheet sheet : sheetsForUser) {
+            if (sheet.getWeekNumber() == getCurrentWeekNum()) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    /**
+     * Changes the current sheet to the previous one.
+     * @return the page the navigate to.
+     */
+    public String previousSheetAction() {
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
+        List<Timesheet> sheetsBeforeCurrent = new ArrayList<Timesheet>();
+
+        Date currentSheetWeek = currentSheet.getEndWeek();
+
+        for (Timesheet sheet : sheetsForUser) {
+            // find the last week
+            if (sheet.getEndWeek().before(currentSheetWeek)) {
+                sheetsBeforeCurrent.add(sheet);
+            }
+        }
+
+        if (sheetsBeforeCurrent.size() <= 0) {
+            return null;
+        }
+
+        Date largestWeek = sheetsBeforeCurrent.get(0).getEndWeek();
+        Timesheet nextSheet = sheetsBeforeCurrent.get(0);
+
+        for (Timesheet sheet : sheetsBeforeCurrent) {
+            // find the last week
+            if (sheet.getEndWeek().after(largestWeek)) {
+                largestWeek = sheet.getEndWeek();
+                nextSheet = sheet;
+            }
+        }
+        currentSheet = nextSheet;
+
+        return "timesheet?faces-redirect=true";
+    }
+
+
+    /**
+     * Returns whether the passed-in row is being edited.
+     * @param row the row to check
+     * @return whether it is being edited
+     */
+    public boolean isEditing(TimesheetRow row) {
+        // false if the emp is not in the editable list
+        return editable == row;
+    }
+
+    /**
+     * REturns whether something is being edited.
+     * @return bool.
+     */
+    public boolean isEditingMode() {
+        // false if the emp is not in the editable list
+        return editable != null;
+    }
+
+    /**
+     * Returns weather editing is possible due to only being
+     * able to edit the current weeks.
+     * @return weather you can edit.
+     */
+    public boolean canEdit() {
+        // only if its the current week
+        return (currentSheet.getWeekNumber() == getCurrentWeekNum());
+    }
+
+    /**
+     * Returns the current week number.
+     * @return the index of the current week.
+     */
+    public int getCurrentWeekNum() {
         Calendar c = new GregorianCalendar();
         Date now = new Date();
         c.setTime(now);
         c.setFirstDayOfWeek(Calendar.SATURDAY);
         return c.get(Calendar.WEEK_OF_YEAR);
-		
-	}
+    }
 
-	public String editAction(TimesheetRow row) {
-		editable = row;
-		return "timesheet";
-	}
-	
-	public void clearEditable() {
-		editable = null;
-	}
+    /**
+     * Edit a row.
+     * @param row to be edited.
+     * @return the page to navigate to.
+     */
+    public String editAction(TimesheetRow row) {
+        editable = row;
+        return "timesheet";
+    }
 
-	public String deleteAction(TimesheetRow row) {
-		currentSheet.deleteRow(row);
-		return "timesheet";
-	}
-	
-	public String saveAction() {
-		this.clearEditable();
-		return "timesheet";
-	}
+    /**
+     * Clears editable.
+     */
+    public void clearEditable() {
+        editable = null;
+    }
 
-	public String createTimesheetAction() {
-		List<TimesheetRow> rows = new ArrayList<TimesheetRow>();
+    /**
+     * Deletes a row.
+     * @param row row to delete.
+     * @return page to navigate to.
+     */
+    public String deleteAction(TimesheetRow row) {
+        currentSheet.deleteRow(row);
+        return "timesheet";
+    }
 
-		// need 5 empty rows
-		for(int i = 0; i < 5; i++) {
-			rows.add(new TimesheetRow());
-		}
-		
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
+    /**
+     * Saves current state.
+     * @return page to navigate to.
+     */
+    public String saveAction() {
+        this.clearEditable();
+        return "timesheet";
+    }
 
-		Date latestWeek = sheetsForUser.get(0).getEndWeek();
-				
-		for(Timesheet sheet : sheetsForUser) {
-			//find the last week
-			if (sheet.getEndWeek().after(latestWeek)) {
-				latestWeek = sheet.getEndWeek();
-			}
-		}
+    /**
+     * Creates a timesheet.
+     * @return the page to navigate to.
+     */
+    public String createTimesheetAction() {
+        List<TimesheetRow> rows = new ArrayList<TimesheetRow>();
 
-		Timesheet newSheet = new Timesheet(user.getCurrentEmployee(), 
-				getOneWeekAfter(latestWeek), rows);
-		sheetCollection.addTimesheet(newSheet);
-		currentSheet = newSheet;
-		
-		return "timesheet?faces-redirect=true";
-	}
+        // need 5 empty rows
+        for (int i = 0; i < 5; i++) {
+            rows.add(new TimesheetRow());
+        }
 
-	/**
-	 * This is used to create sample data for each employee
-	 * it is the timesheet for the PREVIOUS week, allowing you to create a new timesheet when
-	 * first using the application
-	 */
-	@PostConstruct
-	private void init() {
-		List<TimesheetRow> rowss = new ArrayList<TimesheetRow>();
-		List<Timesheet> sheets = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
 
-		System.out.println("~~~~~~~~~~~~~~~~~~`" + sheets.size());
-		if(sheets.size() == 0) {
-			BigDecimal[] t1 = {new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")
-							, new BigDecimal("1.0"), new BigDecimal("1.0"), new BigDecimal("1.0")};
-			BigDecimal[] t2 = {new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")
-							, new BigDecimal("2.0"), new BigDecimal("2.0"), new BigDecimal("2.0")};
-			BigDecimal[] t3 = {new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")
-							, new BigDecimal("3.0"), new BigDecimal("3.0"), new BigDecimal("3.0")};
-			BigDecimal[] t4 = {new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0")
-							, new BigDecimal("4.0"), new BigDecimal("4.0"), new BigDecimal("4.0")};
-			BigDecimal[] t5 = {new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0")
-							, new BigDecimal("5.0"), new BigDecimal("5.0"), new BigDecimal("5.0")};
+        Date latestWeek = sheetsForUser.get(0).getEndWeek();
 
-			rowss.add(new TimesheetRow(1,"wp1", t1, "comments1"));
-			rowss.add(new TimesheetRow(2,"wp2", t2, "comments2"));
-			rowss.add(new TimesheetRow(3,"wp3", t3, "comments3"));
-			rowss.add(new TimesheetRow(4,"wp4", t4, "comments4"));
-			rowss.add(new TimesheetRow(5,"wp5", t5, "comments5"));
+        for (Timesheet sheet : sheetsForUser) {
+            // find the last week
+            if (sheet.getEndWeek().after(latestWeek)) {
+                latestWeek = sheet.getEndWeek();
+            }
+        }
 
-			Timesheet sheet = new Timesheet(user.getCurrentEmployee(), 
-											getOneWeekBefore(getLastDayOfWeekDate()), rowss); 
-			sheetCollection.addTimesheet(sheet);
+        Timesheet newSheet =
+                new Timesheet(user.getCurrentEmployee(), 
+                              getOneWeekAfter(latestWeek), rows);
 
-			currentSheet = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee()).get(0);
+        sheetCollection.addTimesheet(newSheet);
+        currentSheet = newSheet;
 
-		} else {
-			//make currentSheet the current week
-			currentSheet = getLatestSheet();
-		}
+        return "timesheet?faces-redirect=true";
+    }
 
-			
-	}
-	private Timesheet getLatestSheet() {
-		List<Timesheet> sheetsForUser = sheetCollection.getTimesheetsForEmployee(user.getCurrentEmployee());
-		
-		Timesheet latestSheet = sheetsForUser.get(0);
-		
-		for(Timesheet sheet : sheetsForUser) {
-			sheet.getEndWeek().after(latestSheet.getEndWeek());
-			latestSheet = sheet;
-		}
-		
-		return latestSheet;
-		
-	}
-	
-	private Date getOneWeekAfter(Date week) {
+
+    /**
+     * Returns the latest timsheet for the current employee.
+     * @return
+     */
+    private Timesheet getLatestSheet() {
+        List<Timesheet> sheetsForUser =
+                sheetCollection.getTimesheetsForEmployee(
+                                user.getCurrentEmployee());
+
+        Timesheet latestSheet = sheetsForUser.get(0);
+
+        for (Timesheet sheet : sheetsForUser) {
+            sheet.getEndWeek().after(latestSheet.getEndWeek());
+            latestSheet = sheet;
+        }
+
+        return latestSheet;
+
+    }
+
+    /**
+     * Return the date one week after teh passed in date.
+     * @param week the passed in date.
+     * @return the date a week after.
+     */
+    private Date getOneWeekAfter(Date week) {
         Date newDate = new Date(week.getTime());
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(newDate);
@@ -274,9 +393,14 @@ public class TimesheetService implements Serializable {
         newDate.setTime(calendar.getTime().getTime());
 
         return newDate;
-	}
+    }
 
-	private Date getOneWeekBefore(Date week) {
+    /**
+     * Return the date one week before the passed in date.
+     * @param week the passed in date.
+     * @return the date a week before.
+     */
+    private Date getOneWeekBefore(Date week) {
         Date newDate = new Date(week.getTime());
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(newDate);
@@ -284,23 +408,32 @@ public class TimesheetService implements Serializable {
         newDate.setTime(calendar.getTime().getTime());
 
         return newDate;
-	}
+    }
 
-	public BigDecimal getTotalForDay(int day_index) {
-		
-		BigDecimal total = BigDecimal.ZERO;
-		for(TimesheetRow row : currentSheet.getDetails()) {
-			BigDecimal hour = row.getHour(day_index);
-			if (hour != null) {
-				total = total.add(hour);
-			} 
-				
-		}
-	
-		return total;
-	}
+    /**
+     * Returns the sum of the days hours in a timesheet.
+     * @param day_index the index of the day.
+     * @return the sum.
+     */
+    public BigDecimal getTotalForDay(int day_index) {
 
-    public static Date getLastDayOfWeekDate() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (TimesheetRow row : currentSheet.getDetails()) {
+            BigDecimal hour = row.getHour(day_index);
+            if (hour != null) {
+                total = total.add(hour);
+            }
+
+        }
+
+        return total;
+    }
+
+    /**
+     * Returns the friday for the week.
+     * @return the friday date.
+     */
+    public Date getLastDayOfWeekDate() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_WEEK,
                 cal.getActualMinimum(Calendar.DAY_OF_WEEK));
@@ -309,28 +442,43 @@ public class TimesheetService implements Serializable {
         int week = cal.get(Calendar.DAY_OF_WEEK);
         return new Date(now.getTime() - 24 * 60 * 60 * 1000 * (week - 6));
     }
-    
-    public static int getWeekNumber() {
+
+    /**
+     * Returns the current week number based on todays time.
+     * @return the week number.
+     */
+    public int getWeekNumber() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_WEEK,
                 cal.getActualMinimum(Calendar.DAY_OF_WEEK));
         Date now = new Date();
         cal.setTime(now);
-        return (cal.get(Calendar.DAY_OF_WEEK) -1);
-    	
+        return (cal.get(Calendar.DAY_OF_WEEK) - 1);
+
     }
-	
-	public Timesheet getCurrentSheet() {
-		return currentSheet;
-	}
-	
-	public void setCurrentTimesheet(Timesheet sheet) {
-		this.currentSheet = sheet;
-	}
-	
-	public void addTimesheetRow(TimesheetRow row) {
-		currentSheet.addSheetRow(row);
-	}
-	
-	
+
+    /**
+     * Returns the current timesheet.
+     * @return the timesheet.
+     */
+    public Timesheet getCurrentSheet() {
+        return currentSheet;
+    }
+
+    /**
+     * Sets the current timesheet.
+     * @param sheet the sheet.
+     */
+    public void setCurrentTimesheet(Timesheet sheet) {
+        this.currentSheet = sheet;
+    }
+
+    /**
+     * Adds a row to the current timesheet.
+     * @param row teh row to add.
+     */
+    public void addTimesheetRow(TimesheetRow row) {
+        currentSheet.addSheetRow(row);
+    }
+
 }
