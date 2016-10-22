@@ -20,12 +20,17 @@ import ca.bcit.infosys.employee.EmployeeList;
 public class AdminService implements Serializable {
 
 	@Inject @NoDB private EmployeeList employeeList;
-	private List<Employee> editable;
+	private Employee editable;
+
 	private Map<String, String> credentials;
 	
 	public AdminService() {
-		editable = new ArrayList<Employee>();
-		System.out.println("hello");
+		editable = null;
+	}
+
+	public boolean isEditingMode() {
+		//false if the emp is not in the editable list
+		return editable != null;
 	}
 	
 	@PostConstruct
@@ -46,21 +51,21 @@ public class AdminService implements Serializable {
 	}
 
 	public String editAction(Employee emp) {
-		editable.add(emp);
+		editable = emp;
 		return "admin";
 	}
 
 	public boolean isEditing(Employee emp) {
 		//false if the emp is not in the editable list
-		return editable.indexOf(emp) != -1;
+		return editable == emp;
 	}
 
 	public void clearEditable() {
-		editable.clear();
+		editable = null;
 	}
 	
 	public String deleteAction(Employee emp) {
-		employeeList.deleteEmpoyee(emp); //side effect -- deletes login combo
+		employeeList.deleteEmpoyee(emp);
 		return "admin";
 	}
 	

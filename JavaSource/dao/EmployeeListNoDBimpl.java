@@ -32,10 +32,12 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 	public EmployeeListNoDBimpl() {
 		loginCombos = new HashMap<String, String>();
 		employees = new ArrayList<Employee>();
-		administrator = new Employee("admin", 1111, "logan");
+		
+		/* initialize test values for and administrator */
+		administrator = new Employee("logan", 1111, "admin");
 		
 						//username, paassword
-		loginCombos.put("logan", "aaa");
+		loginCombos.put("admin", "aaaaa");
 		employees.add(administrator);
 	}
 	

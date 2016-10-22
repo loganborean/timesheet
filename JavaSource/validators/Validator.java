@@ -18,6 +18,7 @@ import javax.inject.Named;
 import org.primefaces.component.datatable.DataTable;
 
 import annotations.NoDB;
+import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.TimesheetRow;
 import services.TimesheetService;
@@ -29,8 +30,9 @@ public class Validator implements Serializable {
 	@Inject @NoDB private EmployeeList employeeList;
 
 	@Inject TimesheetService sheetService;
-	
+
 	private HtmlDataTable ddataTable;
+
 	
 	public HtmlDataTable getDdataTable() {
 		return this.ddataTable;
@@ -90,6 +92,11 @@ public class Validator implements Serializable {
 					new FacesMessage("Only alphabetic, numeric and \'_\' characters are allowed in username"));
 			}
 		}
+		
+		
+		
+
+		
 	}
 
 	public void validateEmpId(FacesContext context, UIComponent componentToValidate, 
@@ -106,6 +113,16 @@ public class Validator implements Serializable {
 		if (empId < 10 || empId > 99999999) {
 			throw new ValidatorException(
 				new FacesMessage("Employee ID must be between 2 and 8 characters"));
+		}
+		
+		Employee currentlyEditingEmployee = (Employee) componentToValidate.getAttributes().get("currentEmp"); 
+
+		for (Employee emp : employeeList.getEmployees()) {
+			if (emp != currentlyEditingEmployee && emp.getEmpNumber() == empId) {
+				throw new ValidatorException(
+					new FacesMessage("Employee ID must be unique"));
+			}
+
 		}
 
 	}

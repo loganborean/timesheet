@@ -44,15 +44,14 @@
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Employee Id: </label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateEmpId}" value="#{createUser.empId}"/>
+			  <h:inputText class="form-control" id="empID" validator="#{validator.validateEmpId}" value="#{createUser.empId}">
+			  </h:inputText>
 		  </div>
 	  </div>
 	  <div class="form-group row">
 		  <label class="col-xs-4 col-form-label">Username: </label>
 		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateUsername}" value="#{createUser.username}">
-                <f:validator validatorId="userName" />
-			  </h:inputText>
+			  <h:inputText class="form-control" validator="#{validator.validateUsername}" value="#{createUser.username}"/>
 		  </div>
 	  </div>
 	  <div class="form-group row">
@@ -90,7 +89,9 @@
                 <h:outputText value="Employee Id" />
             </f:facet>
             <h:outputText value="#{emp.empNumber}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.empNumber}" validator="#{validator.validateEmpId}" rendered="#{admin.isEditing(emp)}"/>
+            <h:inputText class="form-control" value="#{emp.empNumber}" validator="#{validator.validateEmpId}" rendered="#{admin.isEditing(emp)}">
+				<f:attribute name="currentEmp" value="#{emp}" /> 
+			</h:inputText>
         </h:column>
         <h:column>
             <f:facet name="header">
@@ -108,13 +109,13 @@
         </h:column>
         <h:column>
 			<h:commandLink action="#{admin.editAction(emp)}" class="btn btn-default btn-sm btn-warning"
-				rendered="#{not admin.isEditing(emp)}">
+				rendered="#{not admin.isEditing(emp) and not admin.isEditingMode()}">
 				<span class="glyphicon glyphicon-pencil"></span> Edit
 			</h:commandLink>
 		</h:column>
         <h:column>
 			<h:commandLink action="#{admin.deleteAction(emp)}" type="button"
-				class="btn btn-default btn-sm btn-danger" >
+				class="btn btn-default btn-sm btn-danger" rendered="#{not admin.isEditingMode()}">
 				<span class="glyphicon glyphicon-remove"></span> Remove
 			</h:commandLink>
 		</h:column>
