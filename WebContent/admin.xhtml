@@ -2,128 +2,151 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:p="http://primefaces.org/ui"  
-      xmlns:h="http://java.sun.com/jsf/html">
-<head><title></title></head>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+<title></title>
+</head>
 <body>
-<ui:composition template="/templates/base.xhtml">
-<ui:define name="content">
+	<ui:composition template="/templates/base.xhtml">
+		<ui:define name="content">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Administration</h1>
+				</div>
+			</div>
+			<h:form>
+				<p:commandLink value="+ Create User" styleClass="btn btn-primary"
+					onclick="$('#myModal').modal('show');" update=":myForm"
+					immediate="true" />
+			</h:form>
+			<div class="modal" id="myModal" tabindex="-1" role="dialog"
+				aria-labelledby="myModal" aria-hidden="true" data-keyboard="false"
+				data-backdrop="static">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<h:form id="myForm">
+							<div class="modal-header">
+								<h4 class="modal-title">Create Employee</h4>
+							</div>
+							<div class="modal-body">
+								<h:messages class="alert alert-danger"
+									style="list-style-type: none;" />
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">Name: </label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control"
+											validator="#{validator.validateName}"
+											value="#{createUser.name}" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">Employee Id: </label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control" id="empID"
+											validator="#{validator.validateEmpId}"
+											value="#{createUser.empId}">
+										</h:inputText>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">Username: </label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control"
+											validator="#{validator.validateUsername}"
+											value="#{createUser.username}" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">Password: </label>
+									<div class="col-xs-7">
+										<h:inputSecret class="form-control"
+											validator="#{validator.validatePassword}"
+											value="#{createUser.password}" />
+									</div>
+								</div>
+							</div>
+							<h:panelGroup layout="block" styleClass="modal-footer">
+								<p:commandLink value="Close" immediate="true"
+									styleClass="btn btn-default"
+									oncomplete="$('#myModal').modal('hide');" />
+								<h:commandButton class="btn btn-md btn-success "
+									action="#{createUser.createUserAction}" value="Create" />
+							</h:panelGroup>
+						</h:form>
+					</div>
+				</div>
+			</div>
+			<h:form>
+				<h:messages class="alert alert-danger"
+					style="list-style-type: none;" />
+				<h:dataTable class="table table-striped" id="reportTable"
+					value="#{admin.allEmployees}" var="emp">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{emp.name}"
+							rendered="#{not admin.isEditing(emp)}" />
+						<h:inputText class="form-control" value="#{emp.name}"
+							validator="#{validator.validateName}"
+							rendered="#{admin.isEditing(emp)}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Employee Id" />
+						</f:facet>
+						<h:outputText value="#{emp.empNumber}"
+							rendered="#{not admin.isEditing(emp)}" />
+						<h:inputText class="form-control" value="#{emp.empNumber}"
+							validator="#{validator.validateEmpId}"
+							rendered="#{admin.isEditing(emp)}">
+							<f:attribute name="currentEmp" value="#{emp}" />
+						</h:inputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="UserName" />
+						</f:facet>
+						<h:outputText value="#{emp.userName}"
+							rendered="#{not admin.isEditing(emp)}" />
+						<h:inputText class="form-control" value="#{emp.userName}"
+							validator="#{validator.validateUsername}"
+							rendered="#{admin.isEditing(emp)}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Password" />
+						</f:facet>
+						<h:outputText value="#{admin.credentials[emp.userName]}"
+							rendered="#{not admin.isEditing(emp)}" />
+						<h:inputText class="form-control"
+							value="#{admin.credentials[emp.userName]}"
+							validator="#{validator.validatePassword}"
+							rendered="#{admin.isEditing(emp)}" />
+					</h:column>
+					<h:column>
+						<h:commandLink action="#{admin.editAction(emp)}"
+							class="btn btn-default btn-sm btn-warning"
+							rendered="#{not admin.isEditing(emp) and not admin.isEditingMode()}">
+							<span class="glyphicon glyphicon-pencil"></span> Edit
+						</h:commandLink>
+					</h:column>
+					<h:column>
+						<h:commandLink action="#{admin.deleteAction(emp)}" type="button"
+							class="btn btn-default btn-sm btn-danger"
+							rendered="#{not admin.isEditingMode()}">
+							<span class="glyphicon glyphicon-remove"></span> Remove
+						</h:commandLink>
+					</h:column>
+				</h:dataTable>
+				<h:commandButton class="btn btn-default btn-info"
+					value="Save Changes" action="#{admin.saveAction}" />
 
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Administration</h1>
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    
-    
-<h:form>
- <p:commandLink value="+ Create User" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" /> 
-</h:form>
- 
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <h:form id="myForm">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create Employee</h4>
-                </div>
-                <div class="modal-body">
-                
-                
-                
-	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">Name: </label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateName}" value="#{createUser.name}"/>
-		  </div>
-	  </div>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">Employee Id: </label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control" id="empID" validator="#{validator.validateEmpId}" value="#{createUser.empId}">
-			  </h:inputText>
-		  </div>
-	  </div>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">Username: </label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateUsername}" value="#{createUser.username}"/>
-		  </div>
-	  </div>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">Password: </label>
-		  <div class="col-xs-7">
-			  <h:inputSecret class="form-control" validator="#{validator.validatePassword}" value="#{createUser.password}"/>
-		  </div>
-	  </div>
-                </div>
-                <h:panelGroup layout="block" styleClass="modal-footer">
-	  <p:commandLink value="Close" immediate="true" styleClass="btn btn-default" oncomplete="$('#myModal').modal('hide');" />
-	  <h:commandButton class="btn btn-md btn-success " action="#{createUser.createUserAction}" value="Create" />
-                </h:panelGroup>
-            </h:form>
-        </div>
-    </div>
-</div> 
-    
-  <br/>
-    
-  
-    <h:form>
-  	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
-    <h:dataTable class="table table-striped" id="reportTable" value="#{admin.allEmployees}"
-                 var="emp">
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Name" />
-            </f:facet>
-            <h:outputText value="#{emp.name}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.name}" validator="#{validator.validateName}" rendered="#{admin.isEditing(emp)}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Employee Id" />
-            </f:facet>
-            <h:outputText value="#{emp.empNumber}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.empNumber}" validator="#{validator.validateEmpId}" rendered="#{admin.isEditing(emp)}">
-				<f:attribute name="currentEmp" value="#{emp}" /> 
-			</h:inputText>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="UserName" />
-            </f:facet>
-            <h:outputText value="#{emp.userName}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{emp.userName}" validator="#{validator.validateUsername}" rendered="#{admin.isEditing(emp)}"/>
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Password" />
-            </f:facet>
-            <h:outputText value="#{admin.credentials[emp.userName]}" rendered="#{not admin.isEditing(emp)}"/>
-            <h:inputText class="form-control" value="#{admin.credentials[emp.userName]}" validator="#{validator.validatePassword}" rendered="#{admin.isEditing(emp)}"/>
-        </h:column>
-        <h:column>
-			<h:commandLink action="#{admin.editAction(emp)}" class="btn btn-default btn-sm btn-warning"
-				rendered="#{not admin.isEditing(emp) and not admin.isEditingMode()}">
-				<span class="glyphicon glyphicon-pencil"></span> Edit
-			</h:commandLink>
-		</h:column>
-        <h:column>
-			<h:commandLink action="#{admin.deleteAction(emp)}" type="button"
-				class="btn btn-default btn-sm btn-danger" rendered="#{not admin.isEditingMode()}">
-				<span class="glyphicon glyphicon-remove"></span> Remove
-			</h:commandLink>
-		</h:column>
-    </h:dataTable>
-    <h:commandButton class="btn btn-default btn-info" value="Save Changes" action="#{admin.saveAction}" />
-    
-    </h:form>
-</ui:define>
-</ui:composition>
+			</h:form>
+		</ui:define>
+	</ui:composition>
 </body>
 </html>

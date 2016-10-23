@@ -20,227 +20,327 @@ import org.primefaces.component.datatable.DataTable;
 import annotations.NoDBempl;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
+import ca.bcit.infosys.timesheet.Timesheet;
 import ca.bcit.infosys.timesheet.TimesheetRow;
 import services.TimesheetService;
 
+/**
+ * A class for validating input.
+ */
 @Named("validator")
 @SessionScoped
 public class Validator implements Serializable {
-	
-	@Inject @NoDBempl private EmployeeList employeeList;
 
-	@Inject TimesheetService sheetService;
+    /**
+     * DAO for the employee list.
+     */
+    @Inject
+    @NoDBempl
+    private EmployeeList employeeList;
 
-	private HtmlDataTable ddataTable;
+    /**
+     * The object currently representing the timesheet.
+     */
+    @Inject
+    private TimesheetService sheetService;
 
-	
-	public HtmlDataTable getDdataTable() {
-		return this.ddataTable;
-	}
-	
-	public void setDdataTable(HtmlDataTable table) {
-		ddataTable = table;
-	}
+    /**
+     * Validates the password.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException
+     */
+    public void validatePassword(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        String password = (String) value;
+
+        if (password == null || password.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter a password"));
+        }
+
+        if (password.length() < 5 || password.length() > 20) {
+            throw new ValidatorException(
+                    new FacesMessage("password must be between 5 "
+                            + "and 20 characters"));
+        }
+
+        for (int i = 0; i < password.length(); i++) {
+            if (!Character.isLetter(password.charAt(i))
+                    && !Character.isDigit(password.charAt(i))
+                    && password.charAt(i) != '_') {
+
+                throw new ValidatorException(
+                        new FacesMessage("Only alphabetic, numeric "
+                                + "and \'_\' characters are "
+                                + "allowed in password"));
+            }
+        }
+    }
+
+    /**
+     * Validates the username.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException
+     */
+    public void validateUsername(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        String username = (String) value;
+
+        if (username == null || username.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter a username"));
+        }
+
+        if (username.length() < 5 || username.length() > 20) {
+            throw new ValidatorException(
+                    new FacesMessage("username must"
+                            + " be between 5 and 20 characters"));
+        }
+
+        for (int i = 0; i < username.length(); i++) {
+            if (!Character.isLetter(username.charAt(i))
+                    && !Character.isDigit(username.charAt(i))
+                    && username.charAt(i) != '_') {
+                throw new ValidatorException(
+                        new FacesMessage("Only alphabetic, "
+                                + "numeric and \'_\' characters "
+                                + "are allowed in username"));
+            }
+        }
+
+    }
+
+    /**
+     * Validates the employee id.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException
+     */
+    public void validateEmpId(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        Integer empId = (Integer) value;
+
+        if (empId == null) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter an employee id"));
+        }
+
+        if (empId < 10 || empId > 99999999) {
+            throw new ValidatorException(
+                    new FacesMessage("Employee ID must be between 2 "
+                            + "and 8 characters"));
+        }
+
+        Employee currentlyEditingEmployee =
+                (Employee) componentToValidate.getAttributes()
+                                              .get("currentEmp");
+
+        for (Employee emp : employeeList.getEmployees()) {
+            if (emp != currentlyEditingEmployee
+                    && emp.getEmpNumber() == empId) {
+                throw new ValidatorException(
+                        new FacesMessage("Employee ID must be unique"));
+            }
+
+        }
+
+    }
+
+    /**
+     * Validates the name.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException
+     */
+    public void validateName(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        String name = (String) value;
+
+        if (name == null || name.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter a name"));
+        }
+
+        if (name.length() < 2 || name.length() > 20) {
+            throw new ValidatorException(
+                    new FacesMessage("name must be between 2 "
+                            + "and 20 characters"));
+        }
+
+        for (int i = 0; i < name.length(); i++) {
+            if (!Character.isLetter(name.charAt(i)) && name.charAt(i) != '-') {
+                throw new ValidatorException(
+                        new FacesMessage("Only alphabetic, "
+                                + "numeric and \'-\' characters are "
+                                + "allowed in username"));
+            }
+        }
+    }
+
+    /**
+     * Validates the hours.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException the exception.
+     */
+    public void validateHours(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        if (value == null) {
+            return;
+        }
+
+        BigDecimal hours = (BigDecimal) value;
+
+        UIInput proj = (UIInput) componentToValidate.findComponent("projID");
+        Integer id = (Integer) proj.getLocalValue();
+        UIInput work = (UIInput) componentToValidate.findComponent("workp");
+        String wp = (String) work.getLocalValue();
 
 
-	public void validatePassword(FacesContext context, UIComponent componentToValidate, 
-												       Object value) throws ValidatorException {
-		
-		String password = (String) value;
+        Timesheet currentSheet = sheetService.getCurrentSheet();
 
-		if (password == null || password.length() == 0) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter a password"));
-		}
+        String strDayIndex =
+                (String) componentToValidate.getAttributes()
+                                            .get("day_index");
 
-		if (password.length() < 5 || password.length() > 20) {
-			throw new ValidatorException(
-				new FacesMessage("password must be between 5 and 20 characters"));
-		}
+        int dayIndex = Integer.parseInt(strDayIndex);
 
-		for(int i = 0; i < password.length(); i++) {
-			if (!Character.isLetter(password.charAt(i)) && 
-				!Character.isDigit(password.charAt(i)) && 
-				password.charAt(i) != '_') {
-				throw new ValidatorException(
-					new FacesMessage("Only alphabetic, numeric and \'_\' characters are allowed in password"));
-			}
-		}
-	}
-		
+        BigDecimal totalExceptThisHour =
+                sheetService.getTotalForDayExcept(dayIndex, id, wp);
 
-	public void validateUsername(FacesContext context, UIComponent componentToValidate, 
-												       Object value) throws ValidatorException {
-		
-		String username = (String) value;
+        totalExceptThisHour = totalExceptThisHour.add(hours);
 
-		if (username == null || username.length() == 0) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter a username"));
-		}
+        if (totalExceptThisHour.compareTo(new BigDecimal("24")) > 0) {
+            throw new ValidatorException(
+                    new FacesMessage("The total for the day must be "
+                            + "less than 24 hours"));
+        }
 
-		if (username.length() < 5 || username.length() > 20) {
-			throw new ValidatorException(
-				new FacesMessage("username must be between 5 and 20 characters"));
-		}
+    }
 
-		for(int i = 0; i < username.length(); i++) {
-			if (!Character.isLetter(username.charAt(i)) && 
-				!Character.isDigit(username.charAt(i)) && 
-				username.charAt(i) != '_') {
-				throw new ValidatorException(
-					new FacesMessage("Only alphabetic, numeric and \'_\' characters are allowed in username"));
-			}
-		}
-		
-		
-		
+    /**
+     * Validates the notes.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException the exception.
+     */
+    public void validateNotes(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+        String notes = (String) value;
 
-		
-	}
+        if (notes.length() > 100) {
+            throw new ValidatorException(
+                    new FacesMessage("notes must be less than 100 characters"));
+        }
 
-	public void validateEmpId(FacesContext context, UIComponent componentToValidate, 
-												       Object value) throws ValidatorException {
-		
+    }
 
-		Integer empId = (Integer) value;
+    /**
+     * Validates the work package.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException the exception.
+     */
+    public void validateWP(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
 
-		if (empId == null) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter an employee id"));
-		}
+        String wp = (String) value;
 
-		if (empId < 10 || empId > 99999999) {
-			throw new ValidatorException(
-				new FacesMessage("Employee ID must be between 2 and 8 characters"));
-		}
-		
-		Employee currentlyEditingEmployee = (Employee) componentToValidate.getAttributes().get("currentEmp"); 
+        if (wp == null || wp.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter a Work Package"));
+        }
 
-		for (Employee emp : employeeList.getEmployees()) {
-			if (emp != currentlyEditingEmployee && emp.getEmpNumber() == empId) {
-				throw new ValidatorException(
-					new FacesMessage("Employee ID must be unique"));
-			}
+        if (wp.length() > 10) {
+            throw new ValidatorException(
+                    new FacesMessage("name must be less than 10 characters"));
+        }
 
-		}
+        for (int i = 0; i < wp.length(); i++) {
+            if (!Character.isLetter(wp.charAt(i))
+                    && !Character.isDigit(wp.charAt(i))) {
+                throw new ValidatorException(
+                        new FacesMessage("Only letters and digits in WP"));
+            }
+        }
 
-	}
+        List<TimesheetRow> rows = sheetService.getCurrentSheet().getDetails();
+        UIInput proj = (UIInput) componentToValidate.findComponent("projID");
+        Integer id = (Integer) proj.getLocalValue();
 
-	public void validateName(FacesContext context, UIComponent componentToValidate, 
-												       Object value) throws ValidatorException {
-		
-		String name = (String) value;
+        if (id == null) {
+            return;
+        }
 
-		if (name == null || name.length() == 0) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter a name"));
-		}
+        int projectId = id.intValue();
 
-		if (name.length() < 2 || name.length() > 20) {
-			throw new ValidatorException(
-				new FacesMessage("name must be between 2 and 20 characters"));
-		}
+        TimesheetRow currentlyEditingRow =
+                (TimesheetRow) componentToValidate.getAttributes()
+                                                  .get("currentRow");
 
-		for(int i = 0; i < name.length(); i++) {
-			if (!Character.isLetter(name.charAt(i)) && 
-				name.charAt(i) != '-') {
-				throw new ValidatorException(
-					new FacesMessage("Only alphabetic, numeric and \'-\' characters are allowed in username"));
-			}
-		}
-	}
+        for (TimesheetRow row : rows) {
+            Integer thisRowsID = row.getProjectID();
 
-	public void validateHours(FacesContext context, UIComponent componentToValidate, 
-												    Object value) throws ValidatorException {
-		if (value == null) return;
-		
-		BigDecimal hours = (BigDecimal) value;
+            if (thisRowsID == null) {
+                continue;
+            }
 
-		if (hours.compareTo(BigDecimal.ZERO) < 0 || hours.compareTo(new BigDecimal("24")) > 0) {
-			throw new ValidatorException(
-				new FacesMessage("Hours must be between 0 and 24"));
-		}
+            if (row != currentlyEditingRow
+                    && row.getProjectID().equals(projectId)
+                    && row.getWorkPackage().equals(wp)) {
+                throw new ValidatorException(
+                        new FacesMessage("Work package must be "
+                                + "unique for each project"));
 
-	}
+            }
+        }
+    }
 
-	public void validateNotes(FacesContext context, UIComponent componentToValidate, 
-												    Object value) throws ValidatorException {
-		String notes = (String) value;
-		
+    /**
+     * Validates the project ID.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException the exception.
+     */
+    public void validateProjID(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
 
-		if (notes.length() > 100) {
-			throw new ValidatorException(
-				new FacesMessage("notes must be less than 100 characters"));
-		}
+        Integer empId = (Integer) value;
 
-	}
+        if (empId == null) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter a project id"));
+        }
 
+        if (empId < 10 || empId > 99999999) {
+            throw new ValidatorException(
+                    new FacesMessage("project ID must be between 2 "
+                            + "and 8 characters"));
+        }
 
-	public void validateWP(FacesContext context, UIComponent componentToValidate, 
-												    Object value) throws ValidatorException {
-
-		String wp = (String) value;
-
-		if (wp == null || wp.length() == 0) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter a Work Package"));
-		}
-
-		if (wp.length() > 10) {
-			throw new ValidatorException(
-				new FacesMessage("name must be less than 10 characters"));
-		}
-
-		for(int i = 0; i < wp.length(); i++) {
-			if (!Character.isLetter(wp.charAt(i)) && 
-				!Character.isDigit(wp.charAt(i))) { 
-				throw new ValidatorException(
-					new FacesMessage("Only letters and digits in WP"));
-			}
-		}
-
-		List<TimesheetRow> rows = sheetService.getCurrentSheet().getDetails();
-		UIInput proj = (UIInput) componentToValidate.findComponent("projID");
-		Integer id = (Integer) proj.getLocalValue();
-
-		if (id == null) return;
-
-		int projectId = id.intValue();
-		
-		TimesheetRow currentlyEditingRow = (TimesheetRow) componentToValidate.getAttributes().get("currentRow"); 
-
-		for(TimesheetRow row : rows) {
-			Integer thisRowsID = row.getProjectID();
-
-			if (thisRowsID == null) continue;
-
-			if (row != currentlyEditingRow && row.getProjectID().equals(projectId) && row.getWorkPackage().equals(wp)) {
-				throw new ValidatorException(
-					new FacesMessage("Work package must be unique for each project"));
-				
-			}
-		}
-	}
-	
-	public void validateProjID(FacesContext context, UIComponent componentToValidate, 
-												       Object value) throws ValidatorException {
-		
-
-		Integer empId = (Integer) value;
-
-		if (empId == null) {
-			throw new ValidatorException(
-				new FacesMessage("You must enter a project id"));
-		}
-
-		if (empId < 10 || empId > 99999999) {
-			throw new ValidatorException(
-				new FacesMessage("project ID must be between 2 and 8 characters"));
-		}
-
-	}
-	
-
+    }
 
 }

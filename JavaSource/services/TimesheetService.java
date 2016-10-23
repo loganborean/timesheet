@@ -430,6 +430,40 @@ public class TimesheetService implements Serializable {
     }
 
     /**
+     * Returns the sum of the days hours in a timesheet
+     * except for the specified row.
+     * @param day_index the index of the day.
+     * @return the sum.
+     */
+    public BigDecimal getTotalForDayExcept(int day_index,
+                                Integer projectID, String wp) {
+
+        BigDecimal total = BigDecimal.ZERO;
+        int index = 0;
+        for (TimesheetRow row : currentSheet.getDetails()) {
+
+            if (row.getProjectID() == null
+                    || row.getWorkPackage() == null
+                    || projectID == null
+                    || wp == null) {
+                continue;
+            }
+
+            if (row.getProjectID() != projectID
+                && !wp.equals(row.getWorkPackage())) {
+
+                BigDecimal hour = row.getHour(day_index);
+                if (hour != null) {
+                    total = total.add(hour);
+                }
+            }
+            index++;
+        }
+
+        return total;
+    }
+
+    /**
      * Returns the friday for the week.
      * @return the friday date.
      */

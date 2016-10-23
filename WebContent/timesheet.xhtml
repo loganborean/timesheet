@@ -2,263 +2,324 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:p="http://primefaces.org/ui"  
-      xmlns:h="http://java.sun.com/jsf/html">
-<head><title></title></head>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+<title></title>
+</head>
 <body>
-<ui:composition template="/templates/base.xhtml">
-<ui:define name="content">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Timesheets</h1>
-        </div>
-    </div>
-    
-    <h:form>
-  <ul class="pager">
-    <li class="previous">
-        <h:commandLink action="#{timesheet.previousSheetAction()}" 
-                       rendered="#{timesheet.hasPreviousSheet()}">
-            <span>&larr;</span> Older
-        </h:commandLink>
-	</li>
-    <li class="next">
-        <h:commandLink action="#{timesheet.nextSheetAction()}"
-                       rendered="#{timesheet.hasNextSheet()}">
+	<ui:composition template="/templates/base.xhtml">
+		<ui:define name="content">
+			<div class="row">
+				<div class="col-lg-12">
+					<h1 class="page-header">Timesheets</h1>
+				</div>
+			</div>
+
+			<h:form>
+				<ul class="pager">
+					<li class="previous"><h:commandLink
+							action="#{timesheet.previousSheetAction()}"
+							rendered="#{timesheet.hasPreviousSheet()}">
+							<span>&larr;</span> Older
+					</h:commandLink></li>
+					<li class="next"><h:commandLink
+							action="#{timesheet.nextSheetAction()}"
+							rendered="#{timesheet.hasNextSheet()}">
 			Newer <span>&rarr;</span>
-	    </h:commandLink>
-    </li>
-  </ul>
-</h:form>
-	<h:form>
-		<h:commandLink action="#{timesheet.createTimesheetAction()}" type="button"
-			class="btn btn-default btn-sm btn-success" rendered="#{not timesheet.hasCurrentTimesheet()}">
-			<span class="glyphicon glyphicon-plus"></span> Create New Timesheet
+					</h:commandLink></li>
+				</ul>
+			</h:form>
+			<h:form>
+				<h:commandLink action="#{timesheet.createTimesheetAction()}"
+					type="button" class="btn btn-default btn-sm btn-success"
+					rendered="#{not timesheet.hasCurrentTimesheet()}">
+					<span class="glyphicon glyphicon-plus"></span> Create New Timesheet
 		</h:commandLink>
-	</h:form>
+			</h:form>
 
-<h:outputText value="&lt;br/&gt;" escape="false" />
-<div class="row">
-  <label class="col-xs-2 col-form-label">E Number:</label>
-  <div class="col-xs-4">
-	<h:outputText value="#{timesheet.user.currentEmployee.empNumber}" />
-  </div>
-  <label class="col-xs-2 col-form-label">Week Number:</label>
-  <div class="col-xs-4">
-	<h:outputText value="#{timesheet.currentSheet.getWeekNumber()}" />
-  </div>
-</div>
-	  <div class="row">
-		  <label class="col-xs-2 col-form-label">Name:</label>
-		  <div class="col-xs-4">
-	<h:outputText value="#{timesheet.user.currentEmployee.name}" />
-		  </div>
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			<div class="row">
+				<label class="col-xs-2 col-form-label">E Number:</label>
+				<div class="col-xs-4">
+					<h:outputText value="#{timesheet.user.currentEmployee.empNumber}" />
+				</div>
+				<label class="col-xs-2 col-form-label">Week Number:</label>
+				<div class="col-xs-4">
+					<h:outputText value="#{timesheet.currentSheet.getWeekNumber()}" />
+				</div>
+			</div>
+			<div class="row">
+				<label class="col-xs-2 col-form-label">Name:</label>
+				<div class="col-xs-4">
+					<h:outputText value="#{timesheet.user.currentEmployee.name}" />
+				</div>
 
-		  <label class="col-xs-2 col-form-label">Week ending:</label>
-		  <div class="col-xs-4">
-			<h:outputText value="#{timesheet.currentSheet.getWeekEnding()}" />
-		  </div>
-	  </div>
-    <h:outputText value="&lt;br/&gt;" escape="false" />
-	  
-
-	<h:outputText class="alert alert-warning" value="Warning: You can only edit the Timesheet for the current week"
-	              rendered="#{not timesheet.canEdit()}" />
-	<h:outputText value="&lt;br/&gt;" escape="false" />
-<h:form>
- <p:commandLink value="+ Create Row" rendered="#{timesheet.canEdit()}" styleClass="btn btn-primary" onclick="$('#myModal').modal('show');" update=":myForm" immediate="true" style="margin-top: 23px;"/> 
-</h:form>
-	<h:outputText value="&lt;br/&gt;" escape="false" />
-	<h:messages class="alert alert-danger" style="list-style-type: none; margin-bottom: 10px;"/>
-    <h:form>
-
-    <h:dataTable class="table table-striped" value="#{timesheet.currentSheet.details}" type="none"
-				  var="row">
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Project" />
-            </f:facet>
-            <h:outputText value="#{row.projectID}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Project ID" id="projID"  validator="#{validator.validateProjID}" class="form-control" value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="Total" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="WP" />
-            </f:facet>
-            <h:outputText value="#{row.workPackage}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control"  validator="#{validator.validateWP}"  value="#{row.workPackage}" rendered="#{timesheet.isEditing(row)}">
-				<f:attribute name="currentRow" value="#{row}" /> 
-            </h:inputText>
-            
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Total" />
-            </f:facet>
-            <h:outputText value="#{row.getSum()}" rendered="#{not timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.currentSheet.getTotalHours()}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="MON" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[0]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[0]}" validator="#{validator.validateHours}" rendered="#{timesheet.isEditing(row)}"/>
-            <!-- sum monday -->
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(0)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="TUES" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[1]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[1]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(1)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="WED" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[2]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[2]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(2)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="THUR" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[3]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[3]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(3)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="FRI" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[4]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[4]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(4)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="SAT" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[5]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[5]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(5)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="SUN" />
-            </f:facet>
-            <h:outputText value="#{row.hoursForWeek[6]}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText label="Week Hours" class="form-control" value="#{row.hoursForWeek[6]}" rendered="#{timesheet.isEditing(row)}"/>
-			<f:facet name="footer">
-				<h:outputText value="#{timesheet.getTotalForDay(6)}" />
-			</f:facet>	
-        </h:column>
-        <h:column>
-            <f:facet name="header">
-                <h:outputText value="Notes" />
-            </f:facet>
-            <h:outputText value="#{row.notes}" rendered="#{not timesheet.isEditing(row)}"/>
-            <h:inputText class="form-control" value="#{row.notes}" rendered="#{timesheet.isEditing(row)}"/>
-        </h:column>
-        <h:column>
-			<h:commandLink action="#{timesheet.editAction(row)}" class="btn btn-default btn-sm btn-warning"
-				rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
-				<span class="glyphicon glyphicon-pencil"></span> Edit
-			</h:commandLink>
-		</h:column>
-        <h:column>
-			<h:commandLink action="#{timesheet.deleteAction(row)}" type="button"
-				class="btn btn-default btn-sm btn-danger" rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
-				<span class="glyphicon glyphicon-remove"></span> Remove
-			</h:commandLink>
-		</h:column>
-		
-		
-    </h:dataTable>
-    <h:commandButton class="btn btn-default btn-info" value="Save Changes" 
-                     action="#{timesheet.saveAction}" rendered="#{timesheet.canEdit()}"/>
-    
-    </h:form>
+				<label class="col-xs-2 col-form-label">Week ending:</label>
+				<div class="col-xs-4">
+					<h:outputText value="#{timesheet.currentSheet.getWeekEnding()}" />
+				</div>
+			</div>
+			<h:outputText value="&lt;br/&gt;" escape="false" />
 
 
+			<h:outputText class="alert alert-warning"
+				value="Warning: You can only edit the Timesheet for the current week"
+				rendered="#{not timesheet.canEdit()}" />
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			<h:form>
+				<p:commandLink value="+ Create Row"
+					rendered="#{timesheet.canEdit()}" styleClass="btn btn-primary"
+					onclick="$('#myModal').modal('show');" update=":myForm"
+					immediate="true" style="margin-top: 23px;" />
+			</h:form>
+			<h:outputText value="&lt;br/&gt;" escape="false" />
+			<h:messages class="alert alert-danger"
+				style="list-style-type: none; margin-bottom: 10px;" />
+			<h:form>
 
-  
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <h:form id="myForm">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create Row</h4>
-                </div>
-                <div class="modal-body">
-                
-                
-	<h:messages class="alert alert-danger" style="list-style-type: none;"/>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">Project</label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control"  validator="#{validator.validateProjID}" value="#{createSheetRow.projectID}"/>
-		  </div>
-	  </div>
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">WP</label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateWP}" value="#{createSheetRow.workPackage}"/>
-		  </div>
-	  </div>
-	  <ui:repeat value="#{createSheetRow.hoursForWeek}" varStatus="loop">
-		  <div class="form-group row">
-			  <h:outputText class="col-xs-4 col-form-label" value="#{loop.index}" />
-			  <div class="col-xs-7">
-			    <h:inputText class="form-control" validator="#{validator.validateHours}" value="#{createSheetRow.hoursForWeek[loop.index]}" />
-			  </div>
-		  </div>
-	  </ui:repeat> 
+				<h:dataTable class="table table-striped"
+					value="#{timesheet.currentSheet.details}" type="none" var="row">
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Project" />
+						</f:facet>
+						<h:outputText value="#{row.projectID}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText label="Project ID" id="projID"
+							validator="#{validator.validateProjID}" class="form-control"
+							value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}" />
+						<f:facet name="footer">
+							<h:outputText value="Total" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="WP" />
+						</f:facet>
+						<h:outputText value="#{row.workPackage}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText id="workp" class="form-control"
+							validator="#{validator.validateWP}" value="#{row.workPackage}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="currentRow" value="#{row}" />
+						</h:inputText>
 
-	  <div class="form-group row">
-		  <label class="col-xs-4 col-form-label">notes</label>
-		  <div class="col-xs-7">
-			  <h:inputText class="form-control" validator="#{validator.validateNotes}" value="#{createSheetRow.notes}"/>
-		  </div>
-	  </div>
-                
-                
-                
-                </div>
-                <h:panelGroup layout="block" styleClass="modal-footer">
-                    <p:commandLink value="Close" immediate="true" styleClass="btn btn-default" oncomplete="$('#myModal').modal('hide');" />
-	  <h:commandButton class="btn btn-md btn-success " action="#{createSheetRow.createRowAction()}" value="Create" />
-                </h:panelGroup>
-            </h:form>
-        </div>
-    </div>
-</div> 
-  
-
-</ui:define>
-</ui:composition>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Total" />
+						</f:facet>
+						<h:outputText value="#{row.getSum()}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.currentSheet.getTotalHours()}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="MON" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[0]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[0]}"
+							validator="#{validator.validateHours}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="0" />
+						</h:inputText>
+						<!-- sum monday -->
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(0)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="TUES" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[1]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[1]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="1" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(1)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="WED" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[2]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[2]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="2" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(2)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="THUR" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[3]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[3]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="3" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(3)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="FRI" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[4]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[4]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="4" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(4)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="SAT" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[5]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[5]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="5" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(5)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="SUN" />
+						</f:facet>
+						<h:outputText value="#{row.hoursForWeek[6]}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText validator="#{validator.validateHours}"
+							label="Week Hours" class="form-control"
+							value="#{row.hoursForWeek[6]}"
+							rendered="#{timesheet.isEditing(row)}">
+							<f:attribute name="day_index" value="6" />
+						</h:inputText>
+						<f:facet name="footer">
+							<h:outputText value="#{timesheet.getTotalForDay(6)}" />
+						</f:facet>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Notes" />
+						</f:facet>
+						<h:outputText value="#{row.notes}"
+							rendered="#{not timesheet.isEditing(row)}" />
+						<h:inputText class="form-control" value="#{row.notes}"
+							rendered="#{timesheet.isEditing(row)}" />
+					</h:column>
+					<h:column>
+						<h:commandLink action="#{timesheet.editAction(row)}"
+							class="btn btn-default btn-sm btn-warning"
+							rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
+							<span class="glyphicon glyphicon-pencil"></span> Edit
+						</h:commandLink>
+					</h:column>
+					<h:column>
+						<h:commandLink action="#{timesheet.deleteAction(row)}"
+							type="button" class="btn btn-default btn-sm btn-danger"
+							rendered="#{not timesheet.isEditingMode() and timesheet.canEdit()}">
+							<span class="glyphicon glyphicon-remove"></span> Remove
+						</h:commandLink>
+					</h:column>
+				</h:dataTable>
+				<h:commandButton class="btn btn-default btn-info"
+					value="Save Changes" action="#{timesheet.saveAction}"
+					rendered="#{timesheet.canEdit()}" />
+			</h:form>
+			<div class="modal" id="myModal" tabindex="-1" role="dialog"
+				aria-labelledby="myModal" aria-hidden="true" data-keyboard="false"
+				data-backdrop="static">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<h:form id="myForm">
+							<div class="modal-header">
+								<h4 class="modal-title">Create Row</h4>
+							</div>
+							<div class="modal-body">
+								<h:messages class="alert alert-danger"
+									style="list-style-type: none;" />
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">Project</label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control"
+											validator="#{validator.validateProjID}"
+											value="#{createSheetRow.projectID}" />
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">WP</label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control"
+											validator="#{validator.validateWP}"
+											value="#{createSheetRow.workPackage}" />
+									</div>
+								</div>
+								<ui:repeat value="#{createSheetRow.hoursForWeek}"
+									varStatus="loop">
+									<div class="form-group row">
+										<h:outputText class="col-xs-4 col-form-label"
+											value="#{loop.index}" />
+										<div class="col-xs-7">
+											<h:inputText class="form-control"
+												validator="#{validator.validateHours}"
+												value="#{createSheetRow.hoursForWeek[loop.index]}" />
+										</div>
+									</div>
+								</ui:repeat>
+								<div class="form-group row">
+									<label class="col-xs-4 col-form-label">notes</label>
+									<div class="col-xs-7">
+										<h:inputText class="form-control"
+											validator="#{validator.validateNotes}"
+											value="#{createSheetRow.notes}" />
+									</div>
+								</div>
+							</div>
+							<h:panelGroup layout="block" styleClass="modal-footer">
+								<p:commandLink value="Close" immediate="true"
+									styleClass="btn btn-default"
+									oncomplete="$('#myModal').modal('hide');" />
+								<h:commandButton class="btn btn-md btn-success "
+									action="#{createSheetRow.createRowAction()}" value="Create" />
+							</h:panelGroup>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</ui:define>
+	</ui:composition>
 </body>
 </html>
