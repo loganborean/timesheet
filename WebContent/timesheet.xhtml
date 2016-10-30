@@ -37,7 +37,7 @@
 					type="button" class="btn btn-default btn-sm btn-success"
 					rendered="#{not timesheet.hasCurrentTimesheet()}">
 					<span class="glyphicon glyphicon-plus"></span> Create New Timesheet
-		</h:commandLink>
+				</h:commandLink>
 			</h:form>
 
 			<h:outputText value="&lt;br/&gt;" escape="false" />
@@ -70,16 +70,15 @@
 				rendered="#{not timesheet.canEdit()}" />
 			<h:outputText value="&lt;br/&gt;" escape="false" />
 			<h:form>
-				<p:commandLink value="+ Create Row"
-					rendered="#{timesheet.canEdit()}" styleClass="btn btn-primary"
-					onclick="$('#myModal').modal('show');" update=":myForm"
-					immediate="true" style="margin-top: 23px;" />
+				<h:commandButton value="+ Create Row"
+					rendered="#{timesheet.canEdit()}" class="btn btn-primary"
+					action="#{timesheet.createRowAction()}"
+					style="margin-top: 23px;" />
 			</h:form>
 			<h:outputText value="&lt;br/&gt;" escape="false" />
 			<h:messages class="alert alert-danger"
 				style="list-style-type: none; margin-bottom: 10px;" />
 			<h:form>
-
 				<h:dataTable class="table table-striped"
 					value="#{timesheet.currentSheet.details}" type="none" var="row">
 					<h:column>
@@ -259,66 +258,6 @@
 					value="Save Changes" action="#{timesheet.saveAction}"
 					rendered="#{timesheet.canEdit()}" />
 			</h:form>
-			<div class="modal" id="myModal" tabindex="-1" role="dialog"
-				aria-labelledby="myModal" aria-hidden="true" data-keyboard="false"
-				data-backdrop="static">
-				<div class="modal-dialog modal-md">
-					<div class="modal-content">
-						<h:form id="myForm">
-							<div class="modal-header">
-								<h4 class="modal-title">Create Row</h4>
-							</div>
-							<div class="modal-body">
-								<h:messages class="alert alert-danger"
-									style="list-style-type: none;" />
-								<div class="form-group row">
-									<label class="col-xs-4 col-form-label">Project</label>
-									<div class="col-xs-7">
-										<h:inputText class="form-control"
-											validator="#{validator.validateProjID}"
-											value="#{createSheetRow.projectID}" />
-									</div>
-								</div>
-								<div class="form-group row">
-									<label class="col-xs-4 col-form-label">WP</label>
-									<div class="col-xs-7">
-										<h:inputText class="form-control"
-											validator="#{validator.validateWP}"
-											value="#{createSheetRow.workPackage}" />
-									</div>
-								</div>
-								<ui:repeat value="#{createSheetRow.hoursForWeek}"
-									varStatus="loop">
-									<div class="form-group row">
-										<h:outputText class="col-xs-4 col-form-label"
-											value="#{loop.index}" />
-										<div class="col-xs-7">
-											<h:inputText class="form-control"
-												validator="#{validator.validateHours}"
-												value="#{createSheetRow.hoursForWeek[loop.index]}" />
-										</div>
-									</div>
-								</ui:repeat>
-								<div class="form-group row">
-									<label class="col-xs-4 col-form-label">notes</label>
-									<div class="col-xs-7">
-										<h:inputText class="form-control"
-											validator="#{validator.validateNotes}"
-											value="#{createSheetRow.notes}" />
-									</div>
-								</div>
-							</div>
-							<h:panelGroup layout="block" styleClass="modal-footer">
-								<p:commandLink value="Close" immediate="true"
-									styleClass="btn btn-default"
-									oncomplete="$('#myModal').modal('hide');" />
-								<h:commandButton class="btn btn-md btn-success "
-									action="#{createSheetRow.createRowAction()}" value="Create" />
-							</h:panelGroup>
-						</h:form>
-					</div>
-				</div>
-			</div>
 		</ui:define>
 	</ui:composition>
 </body>

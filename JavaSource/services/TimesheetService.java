@@ -148,6 +148,11 @@ public class TimesheetService implements Serializable {
 
         return "timesheet?faces-redirect=true";
     }
+    
+    public String createRowAction() {
+        currentSheet.addRow();
+        return "timesheet?faces-redirect=true";
+    }
 
     /**
      * Returns whether there is another sheet at a later date than the current.
