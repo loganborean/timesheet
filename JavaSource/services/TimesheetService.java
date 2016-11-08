@@ -50,7 +50,7 @@ public class TimesheetService implements Serializable {
      * constructor.
      */
     public TimesheetService() {
-        editable = null;
+        setEditable(null);
     }
 
     /**
@@ -259,7 +259,7 @@ public class TimesheetService implements Serializable {
      */
     public boolean isEditing(TimesheetRow row) {
         // false if the emp is not in the editable list
-        return editable == row;
+        return getEditable() == row;
     }
 
     /**
@@ -268,7 +268,7 @@ public class TimesheetService implements Serializable {
      */
     public boolean isEditingMode() {
         // false if the emp is not in the editable list
-        return editable != null;
+        return getEditable() != null;
     }
 
     /**
@@ -299,16 +299,10 @@ public class TimesheetService implements Serializable {
      * @return the page to navigate to.
      */
     public String editAction(TimesheetRow row) {
-        editable = row;
+        setEditable(row);
         return "timesheet";
     }
 
-    /**
-     * Clears editable.
-     */
-    public void clearEditable() {
-        editable = null;
-    }
 
     /**
      * Deletes a row.
@@ -325,7 +319,11 @@ public class TimesheetService implements Serializable {
      * @return page to navigate to.
      */
     public String saveAction() {
-        this.clearEditable();
+        //store editable in db
+        
+        
+        
+        setEditable(null);
         return "timesheet";
     }
 
@@ -518,6 +516,14 @@ public class TimesheetService implements Serializable {
      */
     public void addTimesheetRow(TimesheetRow row) {
         currentSheet.addSheetRow(row);
+    }
+
+    public TimesheetRow getEditable() {
+        return editable;
+    }
+
+    public void setEditable(TimesheetRow editable) {
+        this.editable = editable;
     }
 
 }

@@ -1,6 +1,11 @@
 package dao;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +20,7 @@ import annotations.NoDBempl;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
+import db.DatabaseUtils;
 
 /**
  * Implementation of ca.bcit.infosys.employee.EmployeeList acting as a data
@@ -54,11 +60,47 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
     }
 
     /**
-     * Returns all employees.
-     * @Return the list of employees.
+     * Gets a list of employees.
+     * @return a list of employees.
      */
     public List<Employee> getEmployees() {
-        return this.employees;
+
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "SELECT * FROM employee";
+
+        Statement stmt = DatabaseUtils.makeStatement(con);
+        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        List<Employee> empList = this.getEmployeeListFromResult(result);
+        DatabaseUtils.close(con);
+
+        return empList;
+    }
+
+    /**
+     * Gets a list of employees from a result set.
+     * @param result the result set.
+     * @return the list of employees.
+     */
+    private List<Employee> getEmployeeListFromResult(final ResultSet result) {
+        List<Employee> employeeList = new ArrayList<Employee>();
+
+        try {
+            while (result.next()) {
+                Employee tempEmp = new Employee(result.getInt("id"),
+                                                result.getString("name"),
+                                                result.getString("username"),
+                                                result.getString("password"));
+                employeeList.add(tempEmp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeeList;
     }
 
 
@@ -67,16 +109,87 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
      * @return the map of the login combos.
      */
     public Map<String, String> getLoginCombos() {
-        return loginCombos;
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "SELECT username, password FROM employee";
+
+        Statement stmt = DatabaseUtils.makeStatement(con);
+        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        Map<String, String> combos = getMapOfLoginsFromResultSet(result);
+
+        DatabaseUtils.close(con);
+
+        return combos;
     }
 
+    /**
+     * A map of valid login combos.
+     * @param result the result set.
+     * @return the map.
+     */
+    private Map<String, String>
+    getMapOfLoginsFromResultSet(final ResultSet result) {
+
+        Map<String, String> combos = new HashMap<String, String>();
+
+        try {
+            while (result.next()) {
+                combos.put(result.getString("username"),
+                           result.getString("password"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return combos;
+    }
 
     /**
      * Returns the administrator.
      * @return the administrator.
      */
     public Employee getAdministrator() {
-        return administrator;
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "SELECT * FROM employee";
+        sql += " WHERE isAdmin = true";
+
+        Statement stmt = DatabaseUtils.makeStatement(con);
+        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        Employee emp = getSingleEmployeeFromResultSet(result);
+        DatabaseUtils.close(con);
+
+        return emp;
+    }
+
+    /**
+     * Returns a single employee from a result set.
+     * @param result the result set.
+     * @return the employee.
+     */
+    private Employee getSingleEmployeeFromResultSet(final ResultSet result) {
+        Employee emp = null;
+        try {
+
+            if (result.next()) {
+                emp = new Employee(result.getInt("id"),
+                                   result.getString("name"),
+                                   result.getString("username"),
+                                   result.getString("password"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return emp;
     }
 
     /**
@@ -85,11 +198,13 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
      * @return boolean whether user is validated.
      */
     public boolean verifyUser(final Credentials credential) {
-        String dbPass = loginCombos.get(credential.getUserName());
-        if (dbPass == null) {
+        String password = getLoginCombos().get(credential.getUserName());
+
+        if (password == null) {
             return false;
         }
-        return dbPass.equals(credential.getPassword());
+
+        return password.equals(credential.getPassword());
     }
 
     /**
@@ -97,24 +212,44 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
      * @param userToDelete the user to delete.
      */
     public void deleteEmpoyee(final Employee userToDelete) {
-        // delete employee
-        Iterator<Employee> iter = employees.iterator();
-        while (iter.hasNext()) {
-            Employee emp = iter.next();
-            if (userToDelete == emp) {
-                iter.remove();
-            }
-        }
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
 
-        // delete their login credentials
-        loginCombos.remove(userToDelete.getUserName());
+        String sql = "";
+        sql += "DELETE FROM employee";
+        sql += " WHERE id = ?";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setInt(stmt, 1, userToDelete.getEmpNumber());
+        DatabaseUtils.executeUpdate(stmt);
+        DatabaseUtils.close(con);
+
     }
 
     /**
      * @param newEmployee the employee to add.
      */
     public void addEmployee(final Employee newEmployee) {
-        employees.add(newEmployee);
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "INSERT INTO employee";
+        sql += " (name, username, password)";
+        sql += " values(?, ?, ?)";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setString(stmt, 1, newEmployee.getName());
+        DatabaseUtils.setString(stmt, 2, newEmployee.getUserName());
+        DatabaseUtils.setString(stmt, 3, newEmployee.getPassword());
+        DatabaseUtils.executeUpdate(stmt);
+        DatabaseUtils.close(con);
+
+//        employees.add(newEmployee);
     }
 
 

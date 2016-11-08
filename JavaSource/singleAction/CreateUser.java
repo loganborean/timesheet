@@ -42,10 +42,16 @@ public class CreateUser implements Serializable {
      * @return the page to navigate to.
      */
     public String createUserAction() {
-        Employee newEmp = new Employee(name, empId, username);
+//        Employee newEmp = new Employee(name, empId, username);
+        Employee newEmp = new Employee();
+        newEmp.setName(name);
+        newEmp.setUserName(username);
+        newEmp.setPassword(password);
+
         Credentials cred = new Credentials();
         cred.setUserName(username);
         cred.setPassword(password);
+
         employeeList.setLoginCombos(cred);
         employeeList.addEmployee(newEmp);
 

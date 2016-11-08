@@ -24,14 +24,7 @@ import javax.faces.context.FacesContext;
 @Named("user")
 @SessionScoped
 public class UserService implements Serializable {
-    /**
-     * The employee username.
-     */
-    private String username;
-    /**
-     * The employee password.
-     */
-    private String password;
+
     /**
      * The current employee.
      */
@@ -72,17 +65,19 @@ public class UserService implements Serializable {
     }
 
     /**
-     * Login to the system
+     * Login to the system.
      * @return the page to be navigated to.
      */
-    public String loginAction() {
-        Credentials cred = makeCredentials();
+    public String loginAction(Credentials cred) {
         if (employeeList.verifyUser(cred)) {
+
             Employee employee = findEmployeeByUsername(cred.getUserName());
             setCurrentEmployee(employee);
-            if (isAdmin()) {
+            if (employeeList.getAdministrator().getEmpNumber()
+                    == employee.getEmpNumber()) {
                 return "admin.xhtml?faces-redirect=true";
             }
+
             return "timesheet";
         }
         //adding an error message.
@@ -97,8 +92,8 @@ public class UserService implements Serializable {
      * @return the page to be navigated to.
      */
     public String logoutAction() {
-        username = null;
-        password = null;
+//        username = null;
+//        password = null;
         currentEmployee = null;
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession httpSession =
@@ -132,47 +127,5 @@ public class UserService implements Serializable {
         return null;
     }
 
-    /**
-     * Constructs a credential.
-     * @return the credential.
-     */
-    public Credentials makeCredentials() {
-        Credentials cred = new Credentials();
-        cred.setUserName(getUsername());
-        cred.setPassword(getPassword());
-        return cred;
-    }
-
-    /**
-     * Returns the password.
-     * @return the password.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the password.
-     * @param password the password.
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
-     * Gets the username.
-     * @return the username.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Sets the username.
-     * @param username.
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
 }

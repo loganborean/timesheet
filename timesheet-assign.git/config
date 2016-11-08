@@ -4,6 +4,4 @@
 	bare = true
 [remote "origin"]
 	url = https://loganborean@bitbucket.org/loganborean/timesheet-assign.git
-	fetch = +refs/*:refs/*
-	mirror = true
 	pushurl = https://github.com/loganborean/timesheet.git

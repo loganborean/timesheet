@@ -89,7 +89,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText label="Project ID" id="projID"
 							validator="#{validator.validateProjID}" class="form-control"
-							value="#{row.projectID}" rendered="#{timesheet.isEditing(row)}" />
+							value="#{timesheet.editable.projectID}" rendered="#{timesheet.isEditing(row)}" />
 						<f:facet name="footer">
 							<h:outputText value="Total" />
 						</f:facet>
@@ -101,7 +101,8 @@
 						<h:outputText value="#{row.workPackage}"
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText id="workp" class="form-control"
-							validator="#{validator.validateWP}" value="#{row.workPackage}"
+							validator="#{validator.validateWP}" 
+							value="#{timesheet.editable.workPackage}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="currentRow" value="#{row}" />
 						</h:inputText>
@@ -124,7 +125,7 @@
 						<h:outputText value="#{row.hoursForWeek[0]}"
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[0]}"
+							value="#{timesheet.editable.hoursForWeek[0]}"
 							validator="#{validator.validateHours}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="0" />
@@ -142,7 +143,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[1]}"
+							value="#{timesheet.editable.hoursForWeek[1]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="1" />
 						</h:inputText>
@@ -158,7 +159,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[2]}"
+							value="#{timesheet.editable.hoursForWeek[2]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="2" />
 						</h:inputText>
@@ -174,7 +175,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[3]}"
+							value="#{timesheet.editable.hoursForWeek[3]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="3" />
 						</h:inputText>
@@ -190,7 +191,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[4]}"
+							value="#{timesheet.editable.hoursForWeek[4]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="4" />
 						</h:inputText>
@@ -206,7 +207,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[5]}"
+							value="#{timesheet.editable.hoursForWeek[5]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="5" />
 						</h:inputText>
@@ -222,7 +223,7 @@
 							rendered="#{not timesheet.isEditing(row)}" />
 						<h:inputText validator="#{validator.validateHours}"
 							label="Week Hours" class="form-control"
-							value="#{row.hoursForWeek[6]}"
+							value="#{timesheet.editable.hoursForWeek[6]}"
 							rendered="#{timesheet.isEditing(row)}">
 							<f:attribute name="day_index" value="6" />
 						</h:inputText>
@@ -236,7 +237,8 @@
 						</f:facet>
 						<h:outputText value="#{row.notes}"
 							rendered="#{not timesheet.isEditing(row)}" />
-						<h:inputText class="form-control" value="#{row.notes}"
+						<h:inputText class="form-control" 
+						    value="#{timesheet.editable.notes}"
 							rendered="#{timesheet.isEditing(row)}" />
 					</h:column>
 					<h:column>

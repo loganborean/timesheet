@@ -42,15 +42,8 @@
 											value="#{createUser.name}" />
 									</div>
 								</div>
-								<div class="form-group row">
-									<label class="col-xs-4 col-form-label">Employee Id: </label>
-									<div class="col-xs-7">
-										<h:inputText class="form-control" id="empID"
-											validator="#{validator.validateEmpId}"
-											value="#{createUser.empId}">
-										</h:inputText>
-									</div>
-								</div>
+								<!-- 
+								 -->
 								<div class="form-group row">
 									<label class="col-xs-4 col-form-label">Username: </label>
 									<div class="col-xs-7">
@@ -120,7 +113,7 @@
 						<f:facet name="header">
 							<h:outputText value="Password" />
 						</f:facet>
-						<h:outputText value="#{admin.credentials[emp.userName]}"
+						<h:outputText value="#{emp.password}"
 							rendered="#{not admin.isEditing(emp)}" />
 						<h:inputText class="form-control"
 							value="#{admin.credentials[emp.userName]}"

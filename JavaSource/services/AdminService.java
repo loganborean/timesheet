@@ -99,13 +99,6 @@ public class AdminService implements Serializable {
     }
 
     /**
-     * Clears the editable field.
-     */
-    public void clearEditable() {
-        editable = null;
-    }
-
-    /**
      * Action for deleting an employee.
      * @param emp the employee to delete.
      * @return the page to navigate to.
@@ -120,7 +113,7 @@ public class AdminService implements Serializable {
      * @return the page to navigate to.
      */
     public String saveAction() {
-        this.clearEditable();
+        editable = null;
         return "admin";
     }
 
