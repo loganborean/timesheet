@@ -140,12 +140,13 @@ public class Validator implements Serializable {
                     new FacesMessage("You must enter an employee id"));
         }
 
-        if (empId < 10 || empId > 99999999) {
+        if (empId < 1 || empId > 99999999) {
             throw new ValidatorException(
-                    new FacesMessage("Employee ID must be between 2 "
+                    new FacesMessage("Employee ID must be between 1 "
                             + "and 8 characters"));
         }
 
+        /*
         Employee currentlyEditingEmployee =
                 (Employee) componentToValidate.getAttributes()
                                               .get("currentEmp");
@@ -158,6 +159,7 @@ public class Validator implements Serializable {
             }
 
         }
+        */
 
     }
 

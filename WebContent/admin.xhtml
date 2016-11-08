@@ -79,25 +79,35 @@
 					value="#{admin.allEmployees}" var="emp">
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="Name" />
-						</f:facet>
-						<h:outputText value="#{emp.name}"
-							rendered="#{not admin.isEditing(emp)}" />
-						<h:inputText class="form-control" value="#{emp.name}"
-							validator="#{validator.validateName}"
-							rendered="#{admin.isEditing(emp)}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
 							<h:outputText value="Employee Id" />
 						</f:facet>
 						<h:outputText value="#{emp.empNumber}"
-							rendered="#{not admin.isEditing(emp)}" />
-						<h:inputText class="form-control" value="#{emp.empNumber}"
+							 />
+						<ui:remove>
+
+					this goes in the outptet of employee id
+						rendered="#{not admin.isEditing(emp)}"
+						
+						
+						comments
+						<h:inputText class="form-control" value="#{admin.editable.empNumber}"
 							validator="#{validator.validateEmpId}"
 							rendered="#{admin.isEditing(emp)}">
 							<f:attribute name="currentEmp" value="#{emp}" />
 						</h:inputText>
+						
+						
+					   </ui:remove>
+					</h:column>
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Name" />
+						</f:facet>
+						<h:outputText value="#{emp.name}"
+							rendered="#{not admin.isEditing(emp)}" />
+						<h:inputText class="form-control" value="#{admin.editable.name}"
+							validator="#{validator.validateName}"
+							rendered="#{admin.isEditing(emp)}" />
 					</h:column>
 					<h:column>
 						<f:facet name="header">
@@ -105,7 +115,7 @@
 						</f:facet>
 						<h:outputText value="#{emp.userName}"
 							rendered="#{not admin.isEditing(emp)}" />
-						<h:inputText class="form-control" value="#{emp.userName}"
+						<h:inputText class="form-control" value="#{admin.editable.userName}"
 							validator="#{validator.validateUsername}"
 							rendered="#{admin.isEditing(emp)}" />
 					</h:column>
@@ -116,7 +126,7 @@
 						<h:outputText value="#{emp.password}"
 							rendered="#{not admin.isEditing(emp)}" />
 						<h:inputText class="form-control"
-							value="#{admin.credentials[emp.userName]}"
+							value="#{admin.editable.password}"
 							validator="#{validator.validatePassword}"
 							rendered="#{admin.isEditing(emp)}" />
 					</h:column>

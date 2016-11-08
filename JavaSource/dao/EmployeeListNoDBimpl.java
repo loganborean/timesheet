@@ -252,5 +252,28 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 //        employees.add(newEmployee);
     }
 
+    @Override
+    public void editEmpoyee(final Employee emp) {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "UPDATE employee";
+        sql += " SET name = ?,";
+        sql += " username = ?,";
+        sql += " password = ?";
+        sql += " WHERE id = ?";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setString(stmt, 1, emp.getName());
+        DatabaseUtils.setString(stmt, 2, emp.getUserName());
+        DatabaseUtils.setString(stmt, 3, emp.getPassword());
+        DatabaseUtils.setInt(stmt, 4, emp.getEmpNumber());
+        DatabaseUtils.executeUpdate(stmt);
+        DatabaseUtils.close(con);
+    }
+
 
 }

@@ -169,7 +169,8 @@ public final class DatabaseUtils {
      */
     public static void executeUpdate(final PreparedStatement stmt) {
         try {
-            stmt.executeUpdate();
+            int rows = stmt.executeUpdate();
+            System.out.println("ROWS AFFECTED~~~~~~~~~~~~~~~~~" + rows);
         } catch (SQLException e) {
             e.printStackTrace();
         }

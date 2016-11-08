@@ -35,6 +35,14 @@ public class AdminService implements Serializable {
     public AdminService() {
         editable = null;
     }
+    
+    public Employee getEditable() {
+        return editable;
+    }
+
+    public void setEditable(Employee e) {
+        editable = e;
+    }
 
     /**
      * Returns whether editing is allowed.
@@ -95,7 +103,10 @@ public class AdminService implements Serializable {
      */
     public boolean isEditing(Employee emp) {
         // false if the emp is not in the editable list
-        return editable == emp;
+        if (editable != null) {
+            return editable.getEmpNumber() == emp.getEmpNumber();
+        }
+        return false;
     }
 
     /**
@@ -113,6 +124,7 @@ public class AdminService implements Serializable {
      * @return the page to navigate to.
      */
     public String saveAction() {
+        employeeList.editEmpoyee(editable);
         editable = null;
         return "admin";
     }
