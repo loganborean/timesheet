@@ -92,6 +92,7 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         try {
             while (result.next()) {
                 Employee tempEmp = new Employee(result.getInt("id"),
+                                                result.getInt("empNum"),
                                                 result.getString("name"),
                                                 result.getString("username"),
                                                 result.getString("password"));
@@ -180,6 +181,7 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
             if (result.next()) {
                 emp = new Employee(result.getInt("id"),
+                                   result.getInt("empNum"),
                                    result.getString("name"),
                                    result.getString("username"),
                                    result.getString("password"));
@@ -222,7 +224,7 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         sql += " WHERE id = ?";
 
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
-        DatabaseUtils.setInt(stmt, 1, userToDelete.getEmpNumber());
+        DatabaseUtils.setInt(stmt, 1, userToDelete.getId());
         DatabaseUtils.executeUpdate(stmt);
         DatabaseUtils.close(con);
 
@@ -239,13 +241,14 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
         String sql = "";
         sql += "INSERT INTO employee";
-        sql += " (name, username, password)";
-        sql += " values(?, ?, ?)";
+        sql += " (empNum, name, username, password)";
+        sql += " values(?, ?, ?, ?)";
 
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
-        DatabaseUtils.setString(stmt, 1, newEmployee.getName());
-        DatabaseUtils.setString(stmt, 2, newEmployee.getUserName());
-        DatabaseUtils.setString(stmt, 3, newEmployee.getPassword());
+        DatabaseUtils.setInt(stmt, 1, newEmployee.getEmpNumber());
+        DatabaseUtils.setString(stmt, 2, newEmployee.getName());
+        DatabaseUtils.setString(stmt, 3, newEmployee.getUserName());
+        DatabaseUtils.setString(stmt, 4, newEmployee.getPassword());
         DatabaseUtils.executeUpdate(stmt);
         DatabaseUtils.close(con);
 
@@ -263,7 +266,8 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         sql += "UPDATE employee";
         sql += " SET name = ?,";
         sql += " username = ?,";
-        sql += " password = ?";
+        sql += " password = ?,";
+        sql += " empNum = ?";
         sql += " WHERE id = ?";
 
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
@@ -271,6 +275,7 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         DatabaseUtils.setString(stmt, 2, emp.getUserName());
         DatabaseUtils.setString(stmt, 3, emp.getPassword());
         DatabaseUtils.setInt(stmt, 4, emp.getEmpNumber());
+        DatabaseUtils.setInt(stmt, 5, emp.getId());
         DatabaseUtils.executeUpdate(stmt);
         DatabaseUtils.close(con);
     }

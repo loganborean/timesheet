@@ -73,8 +73,8 @@ public class UserService implements Serializable {
 
             Employee employee = findEmployeeByUsername(cred.getUserName());
             setCurrentEmployee(employee);
-            if (employeeList.getAdministrator().getEmpNumber()
-                    == employee.getEmpNumber()) {
+            if (employeeList.getAdministrator().getId()
+                    == employee.getId()) {
                 return "admin.xhtml?faces-redirect=true";
             }
 

@@ -133,33 +133,31 @@ public class Validator implements Serializable {
             UIComponent componentToValidate, Object value)
             throws ValidatorException {
 
-        Integer empId = (Integer) value;
+        Integer empNum = (Integer) value;
 
-        if (empId == null) {
+        if (empNum == null) {
             throw new ValidatorException(
                     new FacesMessage("You must enter an employee id"));
         }
 
-        if (empId < 1 || empId > 99999999) {
+        if (empNum < 1 || empNum > 99999999) {
             throw new ValidatorException(
                     new FacesMessage("Employee ID must be between 1 "
                             + "and 8 characters"));
         }
 
-        /*
         Employee currentlyEditingEmployee =
                 (Employee) componentToValidate.getAttributes()
                                               .get("currentEmp");
 
         for (Employee emp : employeeList.getEmployees()) {
-            if (emp != currentlyEditingEmployee
-                    && emp.getEmpNumber() == empId) {
+            if (emp.getId() != currentlyEditingEmployee.getId()
+                    && emp.getEmpNumber() == empNum) {
                 throw new ValidatorException(
                         new FacesMessage("Employee ID must be unique"));
             }
 
         }
-        */
 
     }
 

@@ -104,7 +104,7 @@ public class AdminService implements Serializable {
     public boolean isEditing(Employee emp) {
         // false if the emp is not in the editable list
         if (editable != null) {
-            return editable.getEmpNumber() == emp.getEmpNumber();
+            return editable.getId() == emp.getId();
         }
         return false;
     }

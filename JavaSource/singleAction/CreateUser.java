@@ -25,10 +25,10 @@ public class CreateUser implements Serializable {
     @NoDBempl
     private EmployeeList employeeList;
 
+    /** The employee ID of the employee. */
+    private Integer empNum;
     /** The name of the employee. */
     private String name;
-    /** The employee ID of the employee. */
-    private Integer empId;
     /** The username of the employee. */
     private String username;
     /** The password of the employee. */
@@ -44,6 +44,7 @@ public class CreateUser implements Serializable {
     public String createUserAction() {
 //        Employee newEmp = new Employee(name, empId, username);
         Employee newEmp = new Employee();
+        newEmp.setEmpNumber(empNum);
         newEmp.setName(name);
         newEmp.setUserName(username);
         newEmp.setPassword(password);
@@ -69,13 +70,13 @@ public class CreateUser implements Serializable {
     }
 
     /** returns the employee id. */
-    public Integer getEmpId() {
-        return empId;
+    public Integer getEmpNum() {
+        return empNum;
     }
 
     /** sets the employee id. */
-    public void setEmpId(Integer empId) {
-        this.empId = empId;
+    public void setEmpNum(Integer empNum) {
+        this.empNum = empNum;
     }
 
     /** returns the employee username */
