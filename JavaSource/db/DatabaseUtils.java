@@ -1,12 +1,15 @@
 package db;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,6 +122,24 @@ public final class DatabaseUtils {
     }
 
     /**
+     * Executes sql on a prepared statement.
+     * @param stmt the statement.
+     * @param sql the sql to execute.
+     * @return the results returned.
+     */
+    public static ResultSet
+    executePreparedStatement(final PreparedStatement stmt) {
+        ResultSet result = null;
+        try {
+            result = stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
      * Creates a statement.
      * @param connnection the connection
      * @return the statment.
@@ -141,9 +162,31 @@ public final class DatabaseUtils {
      * @param num the number to add the the statment
      */
     public static void setInt(final PreparedStatement stmt,
-                              final int index, final int num) {
+                              final int index, final Integer num) {
         try {
-            stmt.setInt(index, num);
+            if (num == null) {
+                stmt.setNull(index, Types.INTEGER);
+            } else {
+                stmt.setInt(index, num);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param stmt the prepared statment.
+     * @param index the index to add it to.
+     * @param num the number to add the the statment
+     */
+    public static void setDate(final PreparedStatement stmt,
+                               final int index, final Date date) {
+        try {
+            if (date == null) {
+                stmt.setNull(index, Types.DATE);
+            } else {
+                stmt.setDate(index, date);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -157,7 +200,11 @@ public final class DatabaseUtils {
     public static void setString(final PreparedStatement stmt,
                               final int index, final String str) {
         try {
-            stmt.setString(index, str);
+            if (str == null) {
+                stmt.setNull(index, Types.VARCHAR);
+            } else {
+                stmt.setString(index, str);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -170,7 +217,6 @@ public final class DatabaseUtils {
     public static void executeUpdate(final PreparedStatement stmt) {
         try {
             int rows = stmt.executeUpdate();
-            System.out.println("ROWS AFFECTED~~~~~~~~~~~~~~~~~" + rows);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -201,6 +247,26 @@ public final class DatabaseUtils {
         }
 
         return results;
+    }
+
+    /**
+     * Sets a big decimal.
+     * @param stmt the statement.
+     * @param index the index.
+     * @param bigDecimal the big decimal.
+     */
+    public static void setBigDecimal(final PreparedStatement stmt,
+                    final int index, final BigDecimal bigDecimal) {
+        try {
+            if (bigDecimal == null) {
+                stmt.setNull(index, Types.DECIMAL);
+            } else {
+                stmt.setBigDecimal(index, bigDecimal);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
     }
 }
 
