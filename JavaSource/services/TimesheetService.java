@@ -320,9 +320,7 @@ public class TimesheetService implements Serializable {
      * @return page to navigate to.
      */
     public String saveAction() {
-        //store editable in db
-        
-        
+        sheetCollection.updateRow(editable);
         setEditable(null);
         return "timesheet";
     }
@@ -332,12 +330,6 @@ public class TimesheetService implements Serializable {
      * @return the page to navigate to.
      */
     public String createTimesheetAction() {
-        List<TimesheetRow> rows = new ArrayList<TimesheetRow>();
-
-        // need 5 empty rows
-        for (int i = 0; i < 5; i++) {
-            rows.add(new TimesheetRow());
-        }
 
         List<Timesheet> sheetsForUser =
                 sheetCollection.getTimesheetsForEmployee(
@@ -353,11 +345,20 @@ public class TimesheetService implements Serializable {
         }
 
         Timesheet newSheet =
-                new Timesheet(user.getCurrentEmployee(), 
-                              getOneWeekAfter(latestWeek), rows);
+                new Timesheet(user.getCurrentEmployee(),
+                              getOneWeekAfter(latestWeek),
+                              new ArrayList<TimesheetRow>());
 
         sheetCollection.addTimesheet(newSheet);
-        currentSheet = newSheet;
+
+        TimesheetRow tempRow = new TimesheetRow();
+        for (int i = 0; i < 5; i++) {
+            tempRow = new TimesheetRow();
+            tempRow.setTimesheetId(getLatestSheet().getId());
+            sheetCollection.insertRow(tempRow);
+        }
+
+        currentSheet = getLatestSheet();
 
         return "timesheet?faces-redirect=true";
     }

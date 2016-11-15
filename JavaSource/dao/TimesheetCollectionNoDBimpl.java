@@ -44,15 +44,11 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
     /** Timesheet row index for Friday. */
     public static final int FRI = 6;
 
-    /** The list of timesheets. */
-    private List<Timesheet> timesheets;
 
     /* **********************PUBLIC******************************* */
 
     /** Constructor */
-    public TimesheetCollectionNoDBimpl() {
-        timesheets = new ArrayList<Timesheet>();
-    }
+    public TimesheetCollectionNoDBimpl() { }
 
     /** @return the timesheets. */
     public List<Timesheet> getTimesheets() {
@@ -112,6 +108,51 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
             insertTimesheetRow(row);
         }
     }
+    
+    public void insertRow(final TimesheetRow row) {
+        insertTimesheetRow(row);
+    }
+    
+    public void updateRow(final TimesheetRow row) {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "UPDATE timesheet_row "
+            + " SET projectId = ?, "
+            + " work_package = ?, "
+            + " notes = ?, "
+            + " hoursMon = ?, "
+            + " hoursTues = ?, "
+            + " hoursWed = ?, "
+            + " hoursThur = ?, "
+            + " hoursFri = ?, "
+            + " hoursSat = ?, "
+            + " hoursSun = ? "
+            + " WHERE id = ?";
+
+
+        BigDecimal[] weekHours = row.getHoursForWeek();
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        int i = 0;
+
+        DatabaseUtils.setInt(stmt, ++i, row.getProjectID());
+        DatabaseUtils.setString(stmt, ++i, row.getWorkPackage());
+        DatabaseUtils.setString(stmt, ++i, row.getNotes());
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[MON]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[TUE]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[WED]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[THU]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[FRI]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[SAT]);
+        DatabaseUtils.setBigDecimal(stmt, ++i, weekHours[SUN]);
+        DatabaseUtils.setInt(stmt, ++i, row.getId());
+        DatabaseUtils.executeUpdate(stmt);
+        DatabaseUtils.close(con);
+    }
 
     /* **********************PRIVATE******************************* */
 
@@ -136,7 +177,7 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
 
         int i = 0;
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
-        DatabaseUtils.setInt(stmt, ++i, row.getId());
+        DatabaseUtils.setInt(stmt, ++i, row.getTimesheetId());
         DatabaseUtils.setInt(stmt, ++i, row.getProjectID());
         DatabaseUtils.setString(stmt, ++i, row.getWorkPackage());
         DatabaseUtils.setString(stmt, ++i, row.getNotes());
@@ -168,7 +209,7 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
 
         int i = 0;
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
-        DatabaseUtils.setInt(stmt, ++i, sheet.getEmployee().getEmpNumber());
+        DatabaseUtils.setInt(stmt, ++i, sheet.getEmployee().getId());
         DatabaseUtils.setDate(stmt, ++i, new Date(sheet.getEndWeek().getTime()));
         DatabaseUtils.executeUpdate(stmt);
     }
@@ -234,17 +275,18 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
             while (result.next()) {
 
                 BigDecimal[] tempHoursArray = new BigDecimal[7];
-                tempHoursArray[0] = result.getBigDecimal("hoursSat");
-                tempHoursArray[1] = result.getBigDecimal("hoursSun");
-                tempHoursArray[2] = result.getBigDecimal("hoursMon");
-                tempHoursArray[3] = result.getBigDecimal("hoursTues");
-                tempHoursArray[4] = result.getBigDecimal("hoursWed");
-                tempHoursArray[5] = result.getBigDecimal("hoursThur");
-                tempHoursArray[6] = result.getBigDecimal("hoursFri");
+                tempHoursArray[SAT] = result.getBigDecimal("hoursSat");
+                tempHoursArray[SUN] = result.getBigDecimal("hoursSun");
+                tempHoursArray[MON] = result.getBigDecimal("hoursMon");
+                tempHoursArray[TUE] = result.getBigDecimal("hoursTues");
+                tempHoursArray[WED] = result.getBigDecimal("hoursWed");
+                tempHoursArray[THU] = result.getBigDecimal("hoursThur");
+                tempHoursArray[FRI] = result.getBigDecimal("hoursFri");
 
                 TimesheetRow tempRow =
                         new TimesheetRow(result.getInt("id"),
                                          result.getInt("timesheetId"),
+                                         result.getInt("projectId"),
                                          result.getString("work_package"),
                                          tempHoursArray,
                                          result.getString("notes"));
@@ -290,13 +332,13 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
 
         try {
             while (result.next()) {
-                Timesheet tempEmp =
+                Timesheet tempSheet =
                         new Timesheet(result.getInt("id"),
                               getEmployee(result.getInt("empId")),
                               result.getDate("dateEnd"),
                               getRowsForTimesheetFromId(result.getInt("id")));
 
-                timesheetList.add(tempEmp);
+                timesheetList.add(tempSheet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
