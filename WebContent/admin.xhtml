@@ -90,7 +90,7 @@
 						<h:outputText value="#{emp.empNumber}"
 							 rendered="#{not admin.isEditing(emp)}"/>
 						<h:inputText class="form-control" value="#{admin.editable.empNumber}"
-							validator="#{validator.validateEmpId}"
+							validator="#{validator.validateEmpIdEdit}"
 							rendered="#{admin.isEditing(emp)}">
 							<f:attribute name="currentEmp" value="#{emp}" />
 						</h:inputText>

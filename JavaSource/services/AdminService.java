@@ -9,7 +9,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 
@@ -23,7 +23,7 @@ public class AdminService implements Serializable {
     /**
      * The injected DAO for accessing the employee list "DB".
      */
-    @Inject @NoDBempl private EmployeeList employeeList;
+    @Inject @DBempl private EmployeeList employeeList;
 
     /** The employee that is currently edible. */
     private Employee editable;

@@ -6,7 +6,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
@@ -22,7 +22,7 @@ public class CreateUser implements Serializable {
      * The DAO for employee list.
      */
     @Inject
-    @NoDBempl
+    @DBempl
     private EmployeeList employeeList;
 
     /** The employee ID of the employee. */
@@ -53,7 +53,6 @@ public class CreateUser implements Serializable {
         cred.setUserName(username);
         cred.setPassword(password);
 
-        employeeList.setLoginCombos(cred);
         employeeList.addEmployee(newEmp);
 
         return "admin";

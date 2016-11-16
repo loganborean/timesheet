@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
@@ -27,9 +27,9 @@ import db.DatabaseUtils;
  * access object for a simulated database. The "database" is simply the instance
  * variables.
  */
-@NoDBempl
+@DBempl
 @ApplicationScoped
-public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
+public class EmployeeListDBimpl implements EmployeeList, Serializable {
 
     /**
      * Sets the login combos.
@@ -75,118 +75,6 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         return empList;
     }
 
-    /**
-     * Gets a list of employees from a result set.
-     * @param result the result set.
-     * @return the list of employees.
-     */
-    private List<Employee> getEmployeeListFromResult(final ResultSet result) {
-        List<Employee> employeeList = new ArrayList<Employee>();
-
-        try {
-            while (result.next()) {
-                Employee tempEmp = new Employee(result.getInt("id"),
-                                                result.getInt("empNum"),
-                                                result.getString("name"),
-                                                result.getString("username"),
-                                                result.getString("password"));
-                employeeList.add(tempEmp);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeeList;
-    }
-
-
-    /**
-     * Returns the valid login combos.
-     * @return the map of the login combos.
-     */
-    public Map<String, String> getLoginCombos() {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
-                                 "timesheet_user", "Secret123?");
-
-        String sql = "";
-        sql += "SELECT username, password FROM employee";
-
-        Statement stmt = DatabaseUtils.makeStatement(con);
-        ResultSet result = DatabaseUtils.execute(stmt, sql);
-        Map<String, String> combos = getMapOfLoginsFromResultSet(result);
-
-        DatabaseUtils.close(con);
-
-        return combos;
-    }
-
-    /**
-     * A map of valid login combos.
-     * @param result the result set.
-     * @return the map.
-     */
-    private Map<String, String>
-    getMapOfLoginsFromResultSet(final ResultSet result) {
-
-        Map<String, String> combos = new HashMap<String, String>();
-
-        try {
-            while (result.next()) {
-                combos.put(result.getString("username"),
-                           result.getString("password"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return combos;
-    }
-
-    /**
-     * Returns the administrator.
-     * @return the administrator.
-     */
-    public Employee getAdministrator() {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
-                                 "timesheet_user", "Secret123?");
-
-        String sql = "";
-        sql += "SELECT * FROM employee";
-        sql += " WHERE isAdmin = true";
-
-        Statement stmt = DatabaseUtils.makeStatement(con);
-        ResultSet result = DatabaseUtils.execute(stmt, sql);
-        Employee emp = getSingleEmployeeFromResultSet(result);
-        DatabaseUtils.close(con);
-
-        return emp;
-    }
-
-    /**
-     * Returns a single employee from a result set.
-     * @param result the result set.
-     * @return the employee.
-     */
-    private Employee getSingleEmployeeFromResultSet(final ResultSet result) {
-        Employee emp = null;
-        try {
-
-            if (result.next()) {
-                emp = new Employee(result.getInt("id"),
-                                   result.getInt("empNum"),
-                                   result.getString("name"),
-                                   result.getString("username"),
-                                   result.getString("password"));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return emp;
-    }
 
     /**
      * Verify a credential.
@@ -274,5 +162,115 @@ public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
         DatabaseUtils.close(con);
     }
 
+    /**
+     * Returns the administrator.
+     * @return the administrator.
+     */
+    public Employee getAdministrator() {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
 
+        String sql = "";
+        sql += "SELECT * FROM employee";
+        sql += " WHERE isAdmin = true";
+
+        Statement stmt = DatabaseUtils.makeStatement(con);
+        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        Employee emp = getSingleEmployeeFromResultSet(result);
+        DatabaseUtils.close(con);
+
+        return emp;
+    }
+
+    /**
+     * Returns the valid login combos.
+     * @return the map of the login combos.
+     */
+    public Map<String, String> getLoginCombos() {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "SELECT username, password FROM employee";
+
+        Statement stmt = DatabaseUtils.makeStatement(con);
+        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        Map<String, String> combos = getMapOfLoginsFromResultSet(result);
+
+        DatabaseUtils.close(con);
+
+        return combos;
+    }
+
+    /**
+     * A map of valid login combos.
+     * @param result the result set.
+     * @return the map.
+     */
+    private Map<String, String>
+    getMapOfLoginsFromResultSet(final ResultSet result) {
+
+        Map<String, String> combos = new HashMap<String, String>();
+
+        try {
+            while (result.next()) {
+                combos.put(result.getString("username"),
+                           result.getString("password"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return combos;
+    }
+
+    /**
+     * Returns a single employee from a result set.
+     * @param result the result set.
+     * @return the employee.
+     */
+    private Employee getSingleEmployeeFromResultSet(final ResultSet result) {
+        Employee emp = null;
+        try {
+
+            if (result.next()) {
+                emp = new Employee(result.getInt("id"),
+                                   result.getInt("empNum"),
+                                   result.getString("name"),
+                                   result.getString("username"),
+                                   result.getString("password"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return emp;
+    }
+
+    /**
+     * Gets a list of employees from a result set.
+     * @param result the result set.
+     * @return the list of employees.
+     */
+    private List<Employee> getEmployeeListFromResult(final ResultSet result) {
+        List<Employee> employeeList = new ArrayList<Employee>();
+
+        try {
+            while (result.next()) {
+                Employee tempEmp = new Employee(result.getInt("id"),
+                                                result.getInt("empNum"),
+                                                result.getString("name"),
+                                                result.getString("username"),
+                                                result.getString("password"));
+                employeeList.add(tempEmp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeeList;
+    }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import annotations.NoDBsheets;
+import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.timesheet.Timesheet;
 import ca.bcit.infosys.timesheet.TimesheetCollection;
@@ -26,8 +26,8 @@ import db.DatabaseUtils;
  * instance variables.
  */
 @ApplicationScoped
-@NoDBsheets
-public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Serializable {
+@DBsheets
+public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializable {
     
     /** Timesheet row index for Saturday. */
     public static final int SAT = 0;
@@ -48,7 +48,7 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
     /* **********************PUBLIC******************************* */
 
     /** Constructor */
-    public TimesheetCollectionNoDBimpl() { }
+    public TimesheetCollectionDBimpl() { }
 
     /** @return the timesheets. */
     public List<Timesheet> getTimesheets() {

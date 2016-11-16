@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
@@ -34,7 +34,7 @@ public class UserService implements Serializable {
      * The DAO for the employee list.
      */
     @Inject
-    @NoDBempl
+    @DBempl
     private EmployeeList employeeList;
 
     /** ctor */

@@ -14,13 +14,13 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Annotation for sheets collection no-DB implementation.
+ * Annotates the no-database implementation of employeeList interface.
  *
  */
 @Qualifier
 @Target({ANNOTATION_TYPE, TYPE, METHOD, FIELD, PARAMETER})
 @Documented
 @Retention(RUNTIME)
-public @interface NoDBsheets {
+public @interface DBempl {
 
 }

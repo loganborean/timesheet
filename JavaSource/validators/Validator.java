@@ -21,7 +21,7 @@ import javax.inject.Named;
 
 import org.primefaces.component.datatable.DataTable;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.Timesheet;
@@ -39,7 +39,7 @@ public class Validator implements Serializable {
      * DAO for the employee list.
      */
     @Inject
-    @NoDBempl
+    @DBempl
     private EmployeeList employeeList;
 
     /**
@@ -148,6 +148,45 @@ public class Validator implements Serializable {
 
         for (Employee emp : employeeList.getEmployees()) {
             if (emp.getEmpNumber() == empNum) {
+                throw new ValidatorException(
+                        new FacesMessage("Employee ID must be unique"));
+            }
+
+        }
+
+    }
+
+    /**
+     * Validates the employee id.
+     * @param context
+     * @param componentToValidate
+     * @param value the value to validate.
+     * @throws ValidatorException
+     */
+    public void validateEmpIdEdit(FacesContext context,
+            UIComponent componentToValidate, Object value)
+            throws ValidatorException {
+
+        Integer empNum = (Integer) value;
+
+        if (empNum == null) {
+            throw new ValidatorException(
+                    new FacesMessage("You must enter an employee id"));
+        }
+
+        if (empNum < 1 || empNum > 99999999) {
+            throw new ValidatorException(
+                    new FacesMessage("Employee ID must be between 1 "
+                            + "and 8 characters"));
+        }
+
+        Employee currentlyEditingEmployee =
+                (Employee) componentToValidate.getAttributes()
+                                              .get("currentEmp");
+
+        for (Employee emp : employeeList.getEmployees()) {
+            if (emp.getId() != currentlyEditingEmployee.getId()
+                    && emp.getEmpNumber() == empNum) {
                 throw new ValidatorException(
                         new FacesMessage("Employee ID must be unique"));
             }

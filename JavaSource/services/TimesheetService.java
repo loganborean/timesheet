@@ -13,11 +13,11 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import annotations.NoDBsheets;
+import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.timesheet.Timesheet;
 import ca.bcit.infosys.timesheet.TimesheetRow;
-import dao.TimesheetCollectionNoDBimpl;
+import dao.TimesheetCollectionDBimpl;
 
 @Named("timesheet")
 @SessionScoped
@@ -25,8 +25,8 @@ public class TimesheetService implements Serializable {
 
     /** DAO for the saved timesheets. */
     @Inject
-    @NoDBsheets
-    private TimesheetCollectionNoDBimpl sheetCollection;
+    @DBsheets
+    private TimesheetCollectionDBimpl sheetCollection;
 
     /** The bean handling the current user. */
     @Inject

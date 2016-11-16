@@ -7,9 +7,9 @@ import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import annotations.NoDBempl;
+import annotations.DBempl;
 import ca.bcit.infosys.employee.Credentials;
-import dao.EmployeeListNoDBimpl;
+import dao.EmployeeListDBimpl;
 import services.UserService;
 
 /**
@@ -23,8 +23,8 @@ public class ResetPassword {
      * The DAO for the employee list.
      */
     @Inject
-    @NoDBempl
-    private EmployeeListNoDBimpl employeeList;
+    @DBempl
+    private EmployeeListDBimpl employeeList;
 
     @Inject private UserService user;
 
