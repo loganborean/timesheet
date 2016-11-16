@@ -31,32 +31,26 @@ import db.DatabaseUtils;
 @ApplicationScoped
 public class EmployeeListNoDBimpl implements EmployeeList, Serializable {
 
-    /** A map of all the valid login combos. */
-    private Map<String, String> loginCombos;
-    /** A list of employees. */
-    private List<Employee> employees;
-
-    /** The administrator of the application. */
-    private Employee administrator;
-
-    /**
-     * Constructor. Initializes dummy values for an admin.
-     */
-    public EmployeeListNoDBimpl() {
-        loginCombos = new HashMap<String, String>();
-        employees = new ArrayList<Employee>();
-
-        /* initialize test values for administrator */
-        administrator = new Employee("logan", 1111, "admin");
-        loginCombos.put("admin", "aaaaa");
-        employees.add(administrator);
-    }
-
     /**
      * Sets the login combos.
      */
-    public void setLoginCombos(Credentials cred) {
-        loginCombos.put(cred.getUserName(), cred.getPassword());
+    public void resetPassword(Employee emp, Credentials cred) {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "UPDATE employee";
+        sql += " password = ?";
+        sql += " WHERE id = ?";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        int i = 0;
+        DatabaseUtils.setString(stmt, ++i, cred.getPassword());
+        DatabaseUtils.setInt(stmt, ++i, emp.getId());
+        DatabaseUtils.executeUpdate(stmt);
+        DatabaseUtils.close(con);
     }
 
     /**

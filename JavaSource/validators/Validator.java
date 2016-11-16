@@ -146,13 +146,8 @@ public class Validator implements Serializable {
                             + "and 8 characters"));
         }
 
-        Employee currentlyEditingEmployee =
-                (Employee) componentToValidate.getAttributes()
-                                              .get("currentEmp");
-
         for (Employee emp : employeeList.getEmployees()) {
-            if (emp.getId() != currentlyEditingEmployee.getId()
-                    && emp.getEmpNumber() == empNum) {
+            if (emp.getEmpNumber() == empNum) {
                 throw new ValidatorException(
                         new FacesMessage("Employee ID must be unique"));
             }
@@ -160,6 +155,7 @@ public class Validator implements Serializable {
         }
 
     }
+
 
     /**
      * Validates the name.
@@ -186,11 +182,11 @@ public class Validator implements Serializable {
         }
 
         for (int i = 0; i < name.length(); i++) {
-            if (!Character.isLetter(name.charAt(i)) && name.charAt(i) != '-') {
+            if (!Character.isLetter(name.charAt(i)) && name.charAt(i) != '-' && name.charAt(i) != ' ') {
                 throw new ValidatorException(
                         new FacesMessage("Only alphabetic, "
                                 + "numeric and \'-\' characters are "
-                                + "allowed in username"));
+                                + "allowed in name"));
             }
         }
     }

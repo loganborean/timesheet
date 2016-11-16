@@ -124,8 +124,10 @@ public class AdminService implements Serializable {
      * @return the page to navigate to.
      */
     public String saveAction() {
-        employeeList.editEmpoyee(editable);
-        editable = null;
+        if (editable != null) {
+            employeeList.editEmpoyee(editable);
+            editable = null;
+        }
         return "admin";
     }
 

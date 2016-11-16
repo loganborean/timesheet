@@ -60,54 +60,7 @@ public class TimesheetService implements Serializable {
      */
     @PostConstruct
     private void init() {
-//        List<TimesheetRow> rowss = new ArrayList<TimesheetRow>();
-//        List<Timesheet> sheets =
-//                sheetCollection.getTimesheetsForEmployee(
-//                                user.getCurrentEmployee());
-//
-//        if (sheets.size() == 0) {
-//            BigDecimal[] t1 = {new BigDecimal("1.0"), new BigDecimal("1.0"),
-//                    new BigDecimal("1.0"), new BigDecimal("1.0"),
-//                    new BigDecimal("1.0"), new BigDecimal("1.0"),
-//                    new BigDecimal("1.0") };
-//            BigDecimal[] t2 = {new BigDecimal("2.0"), new BigDecimal("2.0"),
-//                    new BigDecimal("2.0"), new BigDecimal("2.0"),
-//                    new BigDecimal("2.0"), new BigDecimal("2.0"),
-//                    new BigDecimal("2.0") };
-//            BigDecimal[] t3 = {new BigDecimal("3.0"), new BigDecimal("3.0"),
-//                    new BigDecimal("3.0"), new BigDecimal("3.0"),
-//                    new BigDecimal("3.0"), new BigDecimal("3.0"),
-//                    new BigDecimal("3.0") };
-//            BigDecimal[] t4 = {new BigDecimal("4.0"), new BigDecimal("4.0"),
-//                    new BigDecimal("4.0"), new BigDecimal("4.0"),
-//                    new BigDecimal("4.0"), new BigDecimal("4.0"),
-//                    new BigDecimal("4.0") };
-//            BigDecimal[] t5 = {new BigDecimal("5.0"), new BigDecimal("5.0"),
-//                    new BigDecimal("5.0"), new BigDecimal("5.0"),
-//                    new BigDecimal("5.0"), new BigDecimal("5.0"),
-//                    new BigDecimal("5.0") };
-//
-//            rowss.add(new TimesheetRow(1, "wp1", t1, "comments1"));
-//            rowss.add(new TimesheetRow(2, "wp2", t2, "comments2"));
-//            rowss.add(new TimesheetRow(3, "wp3", t3, "comments3"));
-//            rowss.add(new TimesheetRow(4, "wp4", t4, "comments4"));
-//            rowss.add(new TimesheetRow(5, "wp5", t5, "comments5"));
-//
-//            Timesheet sheet =
-//                    new Timesheet(user.getCurrentEmployee(),
-//                            getOneWeekBefore(getLastDayOfWeekDate()), rowss);
-//            sheetCollection.addTimesheet(sheet);
-//
-//            currentSheet =
-//                    sheetCollection.getTimesheetsForEmployee(
-//                            user.getCurrentEmployee()).get(0);
-
-//        } else {
-            // make currentSheet the current week
-            currentSheet = getLatestSheet();
-            System.out.println();
-//        }
-
+        currentSheet = getLatestSheet();
     }
 
     /**
@@ -149,10 +102,18 @@ public class TimesheetService implements Serializable {
 
         return "timesheet?faces-redirect=true";
     }
-    
+
     public String createRowAction() {
-        currentSheet.addRow();
+        TimesheetRow newRow = new TimesheetRow();
+        newRow.setTimesheetId(currentSheet.getId());
+        sheetCollection.insertRow(newRow);
+        this.refreshTimesheet();
         return "timesheet?faces-redirect=true";
+    }
+    
+    private void refreshTimesheet() {
+        currentSheet = sheetCollection.getTimesheetById(currentSheet.getId());
+        
     }
 
     /**
@@ -311,7 +272,8 @@ public class TimesheetService implements Serializable {
      * @return page to navigate to.
      */
     public String deleteAction(TimesheetRow row) {
-        currentSheet.deleteRow(row);
+        sheetCollection.deleteRow(row);
+        this.refreshTimesheet();
         return "timesheet";
     }
 
@@ -320,8 +282,11 @@ public class TimesheetService implements Serializable {
      * @return page to navigate to.
      */
     public String saveAction() {
-        sheetCollection.updateRow(editable);
-        setEditable(null);
+        if (editable != null) {
+            sheetCollection.updateRow(editable);
+            setEditable(null);
+            this.refreshTimesheet();
+        }
         return "timesheet";
     }
 

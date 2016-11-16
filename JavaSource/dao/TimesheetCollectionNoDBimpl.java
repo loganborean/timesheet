@@ -96,6 +96,25 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
         return timesheetList;
     }
 
+    public Timesheet getTimesheetById(int id) {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+
+        String sql = "";
+        sql += "SELECT * FROM timesheet";
+        sql += " WHERE id = ?";
+        sql += " LIMIT 1";
+
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setInt(stmt, 1, id);
+        ResultSet result = DatabaseUtils.executePreparedStatement(stmt);
+        List<Timesheet> timesheetList = this.getTimesheetsFromResultSet(result);
+        return timesheetList.get(0);
+        
+    }
 
     /**
      * Adds a timesheet to the DB.
@@ -113,6 +132,28 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
         insertTimesheetRow(row);
     }
     
+    /**
+     * Deltes a row.
+     * @param row the row to delete.
+     */
+    public void deleteRow(final TimesheetRow row) {
+        Connection con = DatabaseUtils.
+                createConnection("com.mysql.jdbc.Driver",
+                                 "jdbc:mysql://localhost/timesheet",
+                                 "timesheet_user", "Secret123?");
+        String sql = "";
+        sql += "DELETE FROM timesheet_row "
+            + " WHERE id = ?";
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        int i = 0;
+        DatabaseUtils.setInt(stmt, ++i, row.getId());
+        DatabaseUtils.executeUpdate(stmt);
+    }
+
+    /**
+     * Updates a row.
+     * @param row the row to update.
+     */
     public void updateRow(final TimesheetRow row) {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
@@ -283,10 +324,15 @@ public class TimesheetCollectionNoDBimpl implements TimesheetCollection, Seriali
                 tempHoursArray[THU] = result.getBigDecimal("hoursThur");
                 tempHoursArray[FRI] = result.getBigDecimal("hoursFri");
 
+                Integer projId = result.getInt("projectId");
+                if (result.wasNull()) {
+                    projId = null;
+                }
+
                 TimesheetRow tempRow =
                         new TimesheetRow(result.getInt("id"),
                                          result.getInt("timesheetId"),
-                                         result.getInt("projectId"),
+                                         projId,
                                          result.getString("work_package"),
                                          tempHoursArray,
                                          result.getString("notes"));

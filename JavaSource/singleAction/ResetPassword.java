@@ -10,6 +10,7 @@ import javax.inject.Named;
 import annotations.NoDBempl;
 import ca.bcit.infosys.employee.Credentials;
 import dao.EmployeeListNoDBimpl;
+import services.UserService;
 
 /**
  * A bean representing the resetting of a password.
@@ -24,6 +25,8 @@ public class ResetPassword {
     @Inject
     @NoDBempl
     private EmployeeListNoDBimpl employeeList;
+
+    @Inject private UserService user;
 
     /** the employee username. **/
     private String username;
@@ -60,7 +63,7 @@ public class ResetPassword {
         newCred.setUserName(username);
         newCred.setPassword(newPassword);
 
-        employeeList.setLoginCombos(newCred);
+        employeeList.resetPassword(user.getCurrentEmployee(), newCred);
 
         return "timesheet";
     }
