@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 
 import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
@@ -25,7 +26,7 @@ import db.DatabaseUtils;
  * data access object for a simulated database. The "database is simply the
  * instance variables.
  */
-@ApplicationScoped
+@SessionScoped
 @DBsheets
 public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializable {
     
@@ -54,7 +55,8 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     public List<Timesheet> getTimesheets() {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -79,7 +81,8 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     public List<Timesheet> getTimesheetsForEmployee(final Employee e)  {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -99,7 +102,8 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     public Timesheet getTimesheetById(int id) {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -139,7 +143,8 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     public void deleteRow(final TimesheetRow row) {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
         String sql = "";
         sql += "DELETE FROM timesheet_row "
@@ -157,7 +162,8 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     public void updateRow(final TimesheetRow row) {
         Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -202,10 +208,13 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param row the row to insert.
      */
     private void insertTimesheetRow(final TimesheetRow row) {
-        Connection con = DatabaseUtils.
+       Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
+
+
 
         String sql = "";
         sql += "INSERT INTO timesheet_row"
@@ -238,9 +247,10 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param sheet the timesheet to insert.
      */
     private void insertTimesheet(final Timesheet sheet) {
-        Connection con = DatabaseUtils.
+       Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -285,9 +295,10 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      */
     private Employee getEmployee(final int id) {
 
-        Connection con = DatabaseUtils.
+       Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";
@@ -351,9 +362,10 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @return A list of timesheet rows.
      */
     private List<TimesheetRow> getRowsForTimesheetFromId(final int id) {
-        Connection con = DatabaseUtils.
+       Connection con = DatabaseUtils.
                 createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet",
+                                 "jdbc:mysql://localhost/timesheet"
+                                 + "?autoReconnect=true&useSSL=false",
                                  "timesheet_user", "Secret123?");
 
         String sql = "";

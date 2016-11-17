@@ -246,7 +246,12 @@ public class Validator implements Serializable {
         }
 
         BigDecimal hours = (BigDecimal) value;
-        
+
+        if (getNumberOfDecimalPlaces(hours) > 1) {
+            throw new ValidatorException(
+                    new FacesMessage("Hours must be at most 1 decimal"));
+        }
+
 
         UIInput proj = (UIInput) componentToValidate.findComponent("projID");
         Integer id = (Integer) proj.getLocalValue();
@@ -274,6 +279,13 @@ public class Validator implements Serializable {
         }
 
     }
+
+    int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
+        String string = bigDecimal.stripTrailingZeros().toPlainString();
+        int index = string.indexOf(".");
+        return index < 0 ? 0 : string.length() - index - 1;
+    }
+    
 
     /**
      * Validates the notes.

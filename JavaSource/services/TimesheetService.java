@@ -16,6 +16,7 @@ import javax.inject.Named;
 import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.timesheet.Timesheet;
+import ca.bcit.infosys.timesheet.TimesheetCollection;
 import ca.bcit.infosys.timesheet.TimesheetRow;
 import dao.TimesheetCollectionDBimpl;
 
@@ -26,7 +27,7 @@ public class TimesheetService implements Serializable {
     /** DAO for the saved timesheets. */
     @Inject
     @DBsheets
-    private TimesheetCollectionDBimpl sheetCollection;
+    private TimesheetCollection sheetCollection;
 
     /** The bean handling the current user. */
     @Inject
@@ -61,6 +62,9 @@ public class TimesheetService implements Serializable {
     @PostConstruct
     private void init() {
         currentSheet = getLatestSheet();
+        if (currentSheet == null) {
+            createTimesheetAction();
+        }
     }
 
     /**
@@ -300,7 +304,13 @@ public class TimesheetService implements Serializable {
                 sheetCollection.getTimesheetsForEmployee(
                                 user.getCurrentEmployee());
 
-        Date latestWeek = sheetsForUser.get(0).getEndWeek();
+        Date latestWeek;
+
+        if (sheetsForUser.size() != 0) {
+            latestWeek = sheetsForUser.get(0).getEndWeek();
+        } else {
+            latestWeek = getOneWeekBefore(getLastDayOfWeekDate());
+        }
 
         for (Timesheet sheet : sheetsForUser) {
             // find the last week
@@ -337,6 +347,9 @@ public class TimesheetService implements Serializable {
         List<Timesheet> sheetsForUser =
                 sheetCollection.getTimesheetsForEmployee(
                                 user.getCurrentEmployee());
+
+        if (sheetsForUser.size() == 0)
+            return null;
 
         Timesheet latestSheet = sheetsForUser.get(0);
 

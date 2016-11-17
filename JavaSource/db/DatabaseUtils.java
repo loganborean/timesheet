@@ -55,7 +55,6 @@ public final class DatabaseUtils {
         }
 
         return con;
-
     }
 
     /**
@@ -124,7 +123,6 @@ public final class DatabaseUtils {
     /**
      * Executes sql on a prepared statement.
      * @param stmt the statement.
-     * @param sql the sql to execute.
      * @return the results returned.
      */
     public static ResultSet
@@ -177,7 +175,7 @@ public final class DatabaseUtils {
     /**
      * @param stmt the prepared statment.
      * @param index the index to add it to.
-     * @param num the number to add the the statment
+     * @param date the date to add the the statment.
      */
     public static void setDate(final PreparedStatement stmt,
                                final int index, final Date date) {
@@ -221,33 +219,6 @@ public final class DatabaseUtils {
             e.printStackTrace();
         }
     }
-    /**
-     * Returns a list of maps of each row and a result set.
-     * @param rs the result set
-     * @return the list of maps
-     * @throws SQLException if the sql fails
-     */
-    public static List<Map<String, Object>> map(final ResultSet rs)
-                                            throws SQLException {
-        List<Map<String, Object>> results =
-                new ArrayList<Map<String, Object>>();
-
-        if (rs != null) {
-            ResultSetMetaData meta = rs.getMetaData();
-            int numColumns = meta.getColumnCount();
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<String, Object>();
-                for (int i = 1; i <= numColumns; ++i) {
-                    String name = meta.getColumnName(i);
-                    Object value = rs.getObject(i);
-                    row.put(name, value);
-                }
-                results.add(row);
-            }
-        }
-
-        return results;
-    }
 
     /**
      * Sets a big decimal.
@@ -266,7 +237,6 @@ public final class DatabaseUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
     }
 }
 
