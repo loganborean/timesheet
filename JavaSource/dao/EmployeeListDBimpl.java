@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
+import javax.sql.DataSource;
 
 import annotations.DBempl;
 import ca.bcit.infosys.employee.Credentials;
@@ -31,20 +33,17 @@ import db.DatabaseUtils;
 @DBempl
 @SessionScoped
 public class EmployeeListDBimpl implements EmployeeList, Serializable {
+    @Resource(mappedName = "java:jboss/datasources/timesheet-jdbc")
+    private DataSource ds;
 
     /**
      * Sets the login combos.
      */
     public void resetPassword(Employee emp, Credentials cred) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
-
+        Connection con = DatabaseUtils.getConnection(ds);
         String sql = "";
         sql += "UPDATE employee";
-        sql += " password = ?";
+        sql += " SET password = ?";
         sql += " WHERE id = ?";
 
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
@@ -60,12 +59,7 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @return a list of employees.
      */
     public List<Employee> getEmployees() {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
-
+        Connection con = DatabaseUtils.getConnection(ds);
         String sql = "";
         sql += "SELECT * FROM employee";
 
@@ -84,6 +78,7 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @return boolean whether user is validated.
      */
     public boolean verifyUser(final Credentials credential) {
+
         String password = getLoginCombos().get(credential.getUserName());
 
         if (password == null) {
@@ -98,11 +93,8 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @param userToDelete the user to delete.
      */
     public void deleteEmpoyee(final Employee userToDelete) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "DELETE FROM employee";
@@ -119,11 +111,7 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @param newEmployee the employee to add.
      */
     public void addEmployee(final Employee newEmployee) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "INSERT INTO employee";
@@ -138,16 +126,11 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
         DatabaseUtils.executeUpdate(stmt);
         DatabaseUtils.close(con);
 
-//        employees.add(newEmployee);
     }
 
     @Override
     public void editEmpoyee(final Employee emp) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "UPDATE employee";
@@ -172,11 +155,7 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @return the administrator.
      */
     public Employee getAdministrator() {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM employee";
@@ -195,11 +174,7 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
      * @return the map of the login combos.
      */
     public Map<String, String> getLoginCombos() {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT username, password FROM employee";

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 /**
  * A class for static database utility methods.
  */
@@ -55,6 +57,17 @@ public final class DatabaseUtils {
         }
 
         return con;
+    }
+    
+    public static Connection getConnection(final DataSource ds) {
+        Connection con = null;
+        try {
+            con = ds.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return con;
+        
     }
 
     /**

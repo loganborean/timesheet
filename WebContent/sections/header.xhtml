@@ -9,45 +9,36 @@
 <ui:composition>
 
 <div id="wrapper">
-    <!-- Navigation -->
     <div class="navbar navbar-default navbar-static-top" style="margin-bottom: 0">
         <!-- /.navbar-header -->
         <div class="container-fluid">
             <div class="navbar-header">
-				<h:link class="navbar-brand" value="Timesheet" outcome="timesheet" />
+				<h:link class="navbar-brand" value="#{msg.timesheet}" outcome="timesheet" />
             </div>
             <h:panelGroup layout="block" rendered="#{user.loggedIn}">
             <ul class="nav navbar-nav">
-				<li><h:link class="nav-item" value="sheets" outcome="timesheet" /></li>
+				<li><h:link class="nav-item" value="#{msg.sheets}" outcome="timesheet" /></li>
 
-				<!-- /.if logged in -->
 
 				<h:panelGroup layout="block" rendered="#{user.isAdmin()}">
-					<li><h:link class="nav-item" value="Admin" outcome="admin" /></li>
+					<li><h:link class="nav-item" value="#{msg.admin}" outcome="admin" /></li>
 				</h:panelGroup>
             </ul>
             </h:panelGroup>
-        <!--
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/pages/logoutAction"><span class="glyphicon glyphicon-log-in"></span> Log Out</a></li>
-                </ul>
-                -->
-        <!-- /.if logged in -->
             <h:panelGroup layout="block" rendered="#{user.loggedIn}">
 				<h:form>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                    <h:link value="Reset Password" outcome="resetPassword"/>
+                    <h:link value="#{msg.resetPass}" outcome="resetPassword"/>
 					</li>
                     <li>
-                    <h:commandLink styleClass="glyphicon glyphicon-log-in" value=" Logout" action="#{user.logoutAction()}"/>
+                    <h:commandLink styleClass="glyphicon glyphicon-log-in" value=" #{msg.logout}" action="#{user.logoutAction()}"/>
 					</li>
                 </ul>
 				</h:form>
 			</h:panelGroup>
         </div>
     </div>
-    <!-- /#page-wrapper -->
 </div>  
 </ui:composition>
 </body>

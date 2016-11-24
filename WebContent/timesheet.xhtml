@@ -14,7 +14,7 @@
 		<ui:define name="content">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Timesheets</h1>
+					<h1 class="page-header">#{msg.timesheet}</h1>
 				</div>
 			</div>
 
@@ -36,28 +36,28 @@
 				<h:commandLink action="#{timesheet.createTimesheetAction()}"
 					type="button" class="btn btn-default btn-sm btn-success"
 					rendered="#{not timesheet.hasCurrentTimesheet()}">
-					<span class="glyphicon glyphicon-plus"></span> Create New Timesheet
+					<span class="glyphicon glyphicon-plus"></span> #{msg.createSheet}
 				</h:commandLink>
 			</h:form>
 
 			<h:outputText value="&lt;br/&gt;" escape="false" />
 			<div class="row">
-				<label class="col-xs-2 col-form-label">E Number:</label>
+				<label class="col-xs-2 col-form-label">#{msg.empNum}:</label>
 				<div class="col-xs-4">
 					<h:outputText value="#{timesheet.user.currentEmployee.empNumber}" />
 				</div>
-				<label class="col-xs-2 col-form-label">Week Number:</label>
+				<label class="col-xs-2 col-form-label">#{msg.weekNum}:</label>
 				<div class="col-xs-4">
 					<h:outputText value="#{timesheet.currentSheet.getWeekNumber()}" />
 				</div>
 			</div>
 			<div class="row">
-				<label class="col-xs-2 col-form-label">Name:</label>
+				<label class="col-xs-2 col-form-label">#{msg.name}:</label>
 				<div class="col-xs-4">
 					<h:outputText value="#{timesheet.user.currentEmployee.name}" />
 				</div>
 
-				<label class="col-xs-2 col-form-label">Week ending:</label>
+				<label class="col-xs-2 col-form-label">#{msg.weekEnd}:</label>
 				<div class="col-xs-4">
 					<h:outputText value="#{timesheet.currentSheet.getWeekEnding()}" />
 				</div>
@@ -66,11 +66,11 @@
 
 
 			<h:outputText class="alert alert-warning"
-				value="Warning: You can only edit the Timesheet for the current week"
+				value="#{msg.currentSheetWarning}"
 				rendered="#{not timesheet.canEdit()}" />
 			<h:outputText value="&lt;br/&gt;" escape="false" />
 			<h:form>
-				<h:commandButton value="+ Create Row"
+				<h:commandButton value="+ #{msg.createRow}"
 					rendered="#{timesheet.canEdit()}" class="btn btn-primary"
 					action="#{timesheet.createRowAction()}"
 					style="margin-top: 23px;" />
@@ -83,7 +83,7 @@
 					value="#{timesheet.currentSheet.details}" type="none" var="row">
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="Project" />
+							<h:outputText value="#{msg.project}" />
 						</f:facet>
 						<h:outputText value="#{row.projectID}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -96,7 +96,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="WP" />
+							<h:outputText value="#{msg.wp}" />
 						</f:facet>
 						<h:outputText value="#{row.workPackage}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -110,7 +110,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="Total" />
+							<h:outputText value="#{msg.total}" />
 						</f:facet>
 						<h:outputText value="#{row.getSum()}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -120,7 +120,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="MON" />
+							<h:outputText value="#{msg.mon}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[0]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -137,7 +137,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="TUES" />
+							<h:outputText value="#{msg.tues}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[1]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -153,7 +153,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="WED" />
+							<h:outputText value="#{msg.wed}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[2]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -169,7 +169,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="THUR" />
+							<h:outputText value="#{msg.thur}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[3]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -185,7 +185,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="FRI" />
+							<h:outputText value="#{msg.fri}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[4]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -201,7 +201,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="SAT" />
+							<h:outputText value="#{msg.sat}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[5]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -217,7 +217,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="SUN" />
+							<h:outputText value="#{msg.sun}" />
 						</f:facet>
 						<h:outputText value="#{row.hoursForWeek[6]}"
 							rendered="#{not timesheet.isEditing(row)}" />
@@ -233,7 +233,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">
-							<h:outputText value="Notes" />
+							<h:outputText value="#{msg.notes}" />
 						</f:facet>
 						<h:outputText value="#{row.notes}"
 							rendered="#{not timesheet.isEditing(row)}" />

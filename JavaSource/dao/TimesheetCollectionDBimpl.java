@@ -11,8 +11,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.sql.DataSource;
 
 import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
@@ -45,6 +47,9 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     /** Timesheet row index for Friday. */
     public static final int FRI = 6;
 
+    @Resource(mappedName = "java:jboss/datasources/timesheet-jdbc")
+    private DataSource ds;
+
 
     /* **********************PUBLIC******************************* */
 
@@ -53,11 +58,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
 
     /** @return the timesheets. */
     public List<Timesheet> getTimesheets() {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM timesheet";
@@ -76,14 +77,10 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * Returns timesheets for a specified employee.
      * @param e the employee.
      * @return the timesheet for the employee.
-     * @throws SQLException 
+     * @throws SQLException
      */
     public List<Timesheet> getTimesheetsForEmployee(final Employee e)  {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM timesheet";
@@ -100,11 +97,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
     }
 
     public Timesheet getTimesheetById(int id) {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM timesheet";
@@ -141,11 +134,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param row the row to delete.
      */
     public void deleteRow(final TimesheetRow row) {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
         String sql = "";
         sql += "DELETE FROM timesheet_row "
             + " WHERE id = ?";
@@ -160,11 +149,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param row the row to update.
      */
     public void updateRow(final TimesheetRow row) {
-        Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "UPDATE timesheet_row "
@@ -208,11 +193,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param row the row to insert.
      */
     private void insertTimesheetRow(final TimesheetRow row) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
 
 
@@ -247,11 +228,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @param sheet the timesheet to insert.
      */
     private void insertTimesheet(final Timesheet sheet) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "INSERT INTO timesheet";
@@ -295,11 +272,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      */
     private Employee getEmployee(final int id) {
 
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM employee";
@@ -362,11 +335,7 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
      * @return A list of timesheet rows.
      */
     private List<TimesheetRow> getRowsForTimesheetFromId(final int id) {
-       Connection con = DatabaseUtils.
-                createConnection("com.mysql.jdbc.Driver",
-                                 "jdbc:mysql://localhost/timesheet"
-                                 + "?autoReconnect=true&useSSL=false",
-                                 "timesheet_user", "Secret123?");
+       Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
         sql += "SELECT * FROM timesheet_row";
