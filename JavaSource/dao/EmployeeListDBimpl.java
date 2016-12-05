@@ -209,6 +209,23 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
         return combos;
     }
 
+    @Override
+    public Employee getEmployeeById(int id) {
+       Connection con = DatabaseUtils.getConnection(ds);
+
+        String sql = "";
+        sql += "SELECT * FROM employee";
+        sql += " WHERE id = ?";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setInt(stmt, 1, id);
+        ResultSet result = DatabaseUtils.executePreparedStatement(stmt);
+        Employee emp = getSingleEmployeeFromResultSet(result);
+        DatabaseUtils.close(con);
+
+        return emp;
+    }
+
     /**
      * Returns a single employee from a result set.
      * @param result the result set.
@@ -255,4 +272,5 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
         }
         return employeeList;
     }
+
 }

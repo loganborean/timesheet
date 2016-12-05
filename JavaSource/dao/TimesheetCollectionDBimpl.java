@@ -186,6 +186,29 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
         DatabaseUtils.close(con);
     }
 
+    @Override
+    public TimesheetRow getTimesheetRow(int id) {
+       Connection con = DatabaseUtils.getConnection(ds);
+
+        String sql = "";
+        sql += "SELECT * FROM timesheet_row";
+        sql += " WHERE id = ?";
+        sql += " LIMIT 1";
+
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setInt(stmt, 1, id);
+        ResultSet result = DatabaseUtils.executePreparedStatement(stmt);
+        List<TimesheetRow> emp = getRowsFromResultSet(result);
+        DatabaseUtils.close(con);
+
+        if (emp.size() == 0) {
+            return null;
+        } else {
+            return emp.get(0);
+        }
+
+    }
+
     /* **********************PRIVATE******************************* */
 
     /**
@@ -372,4 +395,5 @@ public class TimesheetCollectionDBimpl implements TimesheetCollection, Serializa
         }
         return timesheetList;
     }
+
 }

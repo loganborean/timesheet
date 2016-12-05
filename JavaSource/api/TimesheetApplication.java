@@ -7,13 +7,15 @@ import javax.ejb.Stateless;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@ApplicationPath("/restful")
+@ApplicationPath("/api")
 public class TimesheetApplication extends Application {
     private Set<Class<?>> classes = new HashSet<Class<?>>();
 
     public TimesheetApplication()
     {  
         classes.add(EmployeeResource.class);
+        classes.add(TimesheetResource.class);
+
     }
     
     @Override
