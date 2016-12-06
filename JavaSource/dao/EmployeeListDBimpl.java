@@ -187,6 +187,21 @@ public class EmployeeListDBimpl implements EmployeeList, Serializable {
 
         return combos;
     }
+    
+    
+    /**
+     * Returns an employee by finding them by their username.
+     * @param username the username to find by.
+     * @return the employee.
+     */
+    public Employee findEmployeeByUsername(final String username) {
+        for (Employee emp : getEmployees()) {
+            if (emp.getUserName().equals(username)) {
+                return emp;
+            }
+        }
+        return null;
+    }
 
     /**
      * A map of valid login combos.

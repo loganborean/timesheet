@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,6 +198,24 @@ public final class DatabaseUtils {
                 stmt.setNull(index, Types.DATE);
             } else {
                 stmt.setDate(index, date);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param stmt the prepared statment.
+     * @param index the index to add it to.
+     * @param date the date to add the the statment.
+     */
+    public static void setTimestamp(final PreparedStatement stmt,
+                                    final int index, final Timestamp stamp) {
+        try {
+            if (stamp == null) {
+                stmt.setNull(index, Types.DATE);
+            } else {
+                stmt.setTimestamp(index, stamp);
             }
         } catch (SQLException e) {
             e.printStackTrace();

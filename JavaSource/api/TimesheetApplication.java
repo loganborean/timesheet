@@ -15,6 +15,7 @@ public class TimesheetApplication extends Application {
     {  
         classes.add(EmployeeResource.class);
         classes.add(TimesheetResource.class);
+        classes.add(LoginResource.class);
 
     }
     

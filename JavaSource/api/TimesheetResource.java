@@ -30,50 +30,65 @@ import javax.ws.rs.core.UriInfo;
 import annotations.DBempl;
 import annotations.DBsheets;
 import ca.bcit.infosys.employee.Employee;
+import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.Timesheet;
 import ca.bcit.infosys.timesheet.TimesheetCollection;
 
 @Path("/timesheets")
 public class TimesheetResource {
 
-//    @Inject @DBsheets private TimesheetCollection db;
-//
-//    public TimesheetResource() { 
-//    }
-//
-//    @GET
-//    @Produces("application/xml")
-//    public List<Timesheet> getTimesheets() {
-//       List<Timesheet> sheets = db.getTimesheetsForEmployee(currentEmp);
-//       return sheets;
-//    }
-//
-//    @GET
-//    @Path("{id}")
-//    @Produces("application/xml")
-//    public Timesheet getTimesheet(@PathParam("id") final int id,
-//                                  @Context final UriInfo info) {
-//        this.validateCredentials(info);
-//       Timesheet sheet= db.getTimesheetById(id);
-//       //if sheet belongs to
-//       return sheet;
-//    }
-//
-//    @Path("{id}/rows")
-//    @Produces("application/xml")
-//    public TimesheetRowResource getTimesheets(@PathParam("id") int id) {
-//        return new TimesheetRowResource(currentEmp, db.getTimesheetById(id), db);
-//    }
-//
-//    @GET
-//    @Path("{id}")
-//    @Produces("application/xml")
-//    public Employee getEmployee(@PathParam("id") final int id,
-//                                @Context final UriInfo info) {
-//        this.validateCredentials(info);
-//        Employee supplier = db.getEmployeeById(id);
-//        return supplier;
-//    }
+    @Inject @DBsheets private TimesheetCollection db;
+    @Inject @DBempl private EmployeeList dbEmp;
 
+    @Inject private ApiAuthenticator authenticator;
+
+    public TimesheetResource() { }
+
+    @GET
+    @Produces("application/xml")
+    public List<Timesheet> getTimesheets(@Context final UriInfo info) {
+        authenticator.validateCredentials(info);
+        Employee emp = dbEmp.findEmployeeByUsername(info.getQueryParameters()
+                                                        .getFirst("username"));
+
+       List<Timesheet> sheets = db.getTimesheetsForEmployee(emp);
+       return sheets;
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces("application/xml")
+    public Timesheet getTimesheet(@PathParam("id") final int id,
+                                  @Context final UriInfo info) {
+        authenticator.validateCredentials(info);
+        Timesheet sheet = db.getTimesheetById(id);
+
+        Employee emp = dbEmp.findEmployeeByUsername(info.getQueryParameters()
+                                                        .getFirst("username"));
+        //if sheet belongs to
+        if (emp.getId() == sheet.getEmployee().getId()) {
+            return sheet;
+        }
+
+        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @Path("{id}/rows")
+    @Produces("application/xml")
+    public TimesheetRowResource getTimesheets(@Context final UriInfo info,
+                                              @PathParam("id") final int id) {
+        authenticator.validateCredentials(info);
+
+        Timesheet sheet = db.getTimesheetById(id);
+
+        Employee emp = dbEmp.findEmployeeByUsername(info.getQueryParameters()
+                                                        .getFirst("username"));
+
+        if (emp.getId() == sheet.getEmployee().getId()) {
+            return new TimesheetRowResource(emp, sheet, db);
+        }
+
+        throw new WebApplicationException(Response.Status.FORBIDDEN);
+    }
 }
 

@@ -24,13 +24,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import annotations.AdminSecured;
 import annotations.DBempl;
 import annotations.DBsheets;
+import annotations.DBtoken;
 import ca.bcit.infosys.employee.Credentials;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.TimesheetCollection;
 import dao.EmployeeListDBimpl;
+import db.TokenList;
 import validators.EmployeeRestValidator;
 
 
@@ -47,8 +50,14 @@ public class EmployeeResource {
     /** DAO for Timesheets. */
     @Inject @DBsheets private TimesheetCollection dbsheet;
 
+    /** DAO for Timesheets. */
+    @Inject @DBtoken private TokenList dbToken;
+
     /** Validator for employees. */
     @Inject private EmployeeRestValidator employeeValidator;
+
+    /** authenticator. */
+    @Inject private ApiAuthenticator authenticator;
 
     /* **********************PUBLIC*********************** */
 
@@ -60,14 +69,15 @@ public class EmployeeResource {
      * @param info the query parameters.
      * @param emp the employee.
      * @return the response.
-     * @throws Exception 
+     * @throws Exception the ex.
      */
     @POST
+    @AdminSecured
     @Consumes("application/xml")
     public Response createEmployee(@Context final UriInfo info,
                                             final Employee emp)
                                                     throws Exception {
-        this.validateCredentials(info);
+//        authenticator.validateAdminCredentials(info);
         employeeValidator.validate(emp);
         db.addEmployee(emp);
         return Response.created(URI.create("/employees/" + emp.getId()))
@@ -85,7 +95,7 @@ public class EmployeeResource {
     @Produces("application/xml")
     public Employee getEmployee(@PathParam("id") final int id,
                                 @Context final UriInfo info) {
-        this.validateCredentials(info);
+        authenticator.validateAdminCredentials(info);
         Employee supplier = db.getEmployeeById(id);
         return supplier;
     }
@@ -98,7 +108,7 @@ public class EmployeeResource {
     @GET
     @Produces("application/xml")
     public List<Employee> getEmployees(@Context final UriInfo info) {
-        this.validateCredentials(info);
+        authenticator.validateAdminCredentials(info);
         List<Employee> emps = db.getEmployees();
         return emps;
     }
@@ -114,8 +124,10 @@ public class EmployeeResource {
     public void modify(@Context final UriInfo info,
                        @PathParam("id") final Integer id,
                                         final Employee emp) {
-        this.validateCredentials(info);
-        this.checkEmployeeDoesntExist(id);
+        authenticator.validateAdminCredentials(info);
+
+        // TODO put this into validator
+        authenticator.checkEmployeeDoesntExist(id);
         db.editEmpoyee(emp);
     }
 
@@ -143,72 +155,4 @@ public class EmployeeResource {
 
     /* **********************PRIVATE*********************** */
 
-    /**
-     * Returns an employee by finding them by their username.
-     * @param username the username to find by.
-     * @return the employee.
-     */
-    private Employee findEmployeeByUsername(final String username) {
-        for (Employee emp : db.getEmployees()) {
-            if (emp.getUserName().equals(username)) {
-                return emp;
-            }
-        }
-        throw new WebApplicationException(Response.Status.FORBIDDEN);
-    }
-
-    /**
-     * Checks if credentials are valid from query params.
-     * @param info the query parameters.
-     * @return whether the users credendials is valid.
-     */
-    private boolean isValidCredentials(final UriInfo info) {
-        String username = info.getQueryParameters().getFirst("username");
-        String password = info.getQueryParameters().getFirst("password");
-        return db.verifyUser(new Credentials(username, password));
-    }
-
-    /**
-     * Returns whether the guy is admin.
-     * @param id the id to check.
-     * @return whether the id is the admins.
-     */
-    private boolean isAdmin(final int id) {
-        return db.getAdministrator().getId() == id;
-    }
-
-    /**
-     * Checks for a conflicting employee.
-     * @param id the id to check
-     */
-    private void checkConflict(final int id) {
-        Employee tempEmp = db.getEmployeeById(id);
-        if (tempEmp != null) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
-        }
-    }
-
-    /**
-     * Checks if an employee exists.
-     * @param id the id of the employee.
-     */
-    private void checkEmployeeDoesntExist(final int id) {
-        Employee emp = db.getEmployeeById(id);
-        if (emp == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-    }
-
-    /**
-     * Validates query parameters.
-     * @param info the query parameters.
-     */
-    private void validateCredentials(final UriInfo info) {
-        if (!isValidCredentials(info)
-                || !isAdmin(findEmployeeByUsername(info.getQueryParameters()
-                                                       .getFirst("username"))
-                                                       .getId())) {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
-        }
-    }
 }
