@@ -36,11 +36,27 @@ public class TokenListImpl implements TokenList, Serializable {
 
     @Override
     public final void storeToken(final String token, final Employee emp) {
+        
+//        String query = "INSERT INTO token (empId, token, expires_at) "
+//                + "SELECT ?, ?, ? "
+//                + "  FROM dual "
+//                + " WHERE NOT EXISTS (SELECT 1 FROM token WHERE empId = ?)";
+
+ 
         Connection con = DatabaseUtils.getConnection(ds);
+
         String sql = "";
         sql += "INSERT INTO token";
         sql += " (empId, token, expires_at)";
         sql += " values(?, ?, ?)";
+        sql += " ON DUPLICATE KEY UPDATE";
+        sql += "  token = ?,";
+        sql += "  expires_at = ?";
+
+//        String sql = "";
+//        sql += "INSERT INTO token";
+//        sql += " (empId, token, expires_at)";
+//        sql += " values(?, ?, ?)";
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
@@ -50,6 +66,8 @@ public class TokenListImpl implements TokenList, Serializable {
         int i = 0;
         PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
         DatabaseUtils.setInt(stmt, ++i, emp.getId());
+        DatabaseUtils.setString(stmt, ++i, token);
+        DatabaseUtils.setTimestamp(stmt, ++i, stamp);
         DatabaseUtils.setString(stmt, ++i, token);
         DatabaseUtils.setTimestamp(stmt, ++i, stamp);
         DatabaseUtils.executeUpdate(stmt);
