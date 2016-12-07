@@ -61,9 +61,11 @@ public class TimesheetService implements Serializable {
      */
     @PostConstruct
     private void init() {
-        currentSheet = getLatestSheet();
-        if (currentSheet == null) {
-            createTimesheetAction();
+        if (user.getCurrentEmployee() != null) {
+            currentSheet = getLatestSheet();
+            if (currentSheet == null) {
+                createTimesheetAction();
+            }
         }
     }
 
@@ -367,7 +369,7 @@ public class TimesheetService implements Serializable {
      * @param week the passed in date.
      * @return the date a week after.
      */
-    private Date getOneWeekAfter(Date week) {
+    public Date getOneWeekAfter(Date week) {
         Date newDate = new Date(week.getTime());
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(newDate);
@@ -382,7 +384,7 @@ public class TimesheetService implements Serializable {
      * @param week the passed in date.
      * @return the date a week before.
      */
-    private Date getOneWeekBefore(Date week) {
+    public Date getOneWeekBefore(Date week) {
         Date newDate = new Date(week.getTime());
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(newDate);

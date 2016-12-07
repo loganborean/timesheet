@@ -30,19 +30,11 @@ public class TokenListImpl implements TokenList, Serializable {
     /** datasource. */
     @Resource(mappedName = "java:jboss/datasources/timesheet-jdbc")
     private DataSource ds;
-    
     /** DAO for employees. */
     @Inject @DBempl private EmployeeList empDb;
 
     @Override
     public final void storeToken(final String token, final Employee emp) {
-        
-//        String query = "INSERT INTO token (empId, token, expires_at) "
-//                + "SELECT ?, ?, ? "
-//                + "  FROM dual "
-//                + " WHERE NOT EXISTS (SELECT 1 FROM token WHERE empId = ?)";
-
- 
         Connection con = DatabaseUtils.getConnection(ds);
 
         String sql = "";
@@ -52,11 +44,6 @@ public class TokenListImpl implements TokenList, Serializable {
         sql += " ON DUPLICATE KEY UPDATE";
         sql += "  token = ?,";
         sql += "  expires_at = ?";
-
-//        String sql = "";
-//        sql += "INSERT INTO token";
-//        sql += " (empId, token, expires_at)";
-//        sql += " values(?, ?, ?)";
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour

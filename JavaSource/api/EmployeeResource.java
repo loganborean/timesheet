@@ -38,6 +38,7 @@ import ca.bcit.infosys.employee.EmployeeList;
 import ca.bcit.infosys.timesheet.TimesheetCollection;
 import dao.EmployeeListDBimpl;
 import db.TokenList;
+import services.TimesheetService;
 import validators.EmployeeRestValidator;
 
 
@@ -59,6 +60,7 @@ public class EmployeeResource {
 
     /** Validator for employees. */
     @Inject private EmployeeRestValidator employeeValidator;
+
 
     /** Ctor. */
     public EmployeeResource() { }
@@ -106,7 +108,7 @@ public class EmployeeResource {
                                 @Context final UriInfo info) {
         Employee emp = db.getEmployeeById(id);
         if (emp == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
         return emp;
     }
