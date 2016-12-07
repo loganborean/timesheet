@@ -25,7 +25,7 @@ import domain.Token;
 
 @DBtoken
 @SessionScoped
-public class TokenListImpl implements TokenList, Serializable{
+public class TokenListImpl implements TokenList, Serializable {
 
     /** datasource. */
     @Resource(mappedName = "java:jboss/datasources/timesheet-jdbc")
@@ -36,7 +36,7 @@ public class TokenListImpl implements TokenList, Serializable{
 
     @Override
     public final void storeToken(final String token, final Employee emp) {
-       Connection con = DatabaseUtils.getConnection(ds);
+        Connection con = DatabaseUtils.getConnection(ds);
         String sql = "";
         sql += "INSERT INTO token";
         sql += " (empId, token, expires_at)";
@@ -54,12 +54,16 @@ public class TokenListImpl implements TokenList, Serializable{
         DatabaseUtils.setTimestamp(stmt, ++i, stamp);
         DatabaseUtils.executeUpdate(stmt);
         DatabaseUtils.close(con);
-
     }
-    
+
     @Override
     public final boolean isValidToken(final String tokenStr) {
         Token token = getToken(tokenStr);
+
+        if (token == null) {
+            return false;
+        }
+
         long nowTime = new Timestamp(System.currentTimeMillis()).getTime();
         long expiresTime = token.getExpires_at().getTime();
 
@@ -90,11 +94,20 @@ public class TokenListImpl implements TokenList, Serializable{
 
         String sql = "";
         sql += "SELECT * FROM token";
+        sql += " WHERE token = ?";
 
-        Statement stmt = DatabaseUtils.makeStatement(con);
-        ResultSet result = DatabaseUtils.execute(stmt, sql);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+        Date oneHourAfterNow = cal.getTime();
+        Timestamp stamp = new Timestamp(oneHourAfterNow.getTime());
+
+        int i = 0;
+        PreparedStatement stmt = DatabaseUtils.prepareStatement(con, sql);
+        DatabaseUtils.setString(stmt, ++i, tokenStr);
+        ResultSet result = DatabaseUtils.executePreparedStatement(stmt);
         Token token = getTokenFromResultSet(result);
         DatabaseUtils.close(con);
+
         return token;
     }
 

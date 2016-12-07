@@ -63,6 +63,7 @@ public class TimesheetResource {
         authenticator.validateCredentials(info);
         Timesheet sheet = db.getTimesheetById(id);
 
+        // TODO change to token.getemp
         Employee emp = dbEmp.findEmployeeByUsername(info.getQueryParameters()
                                                         .getFirst("username"));
         //if sheet belongs to

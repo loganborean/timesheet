@@ -4,26 +4,25 @@ import java.io.IOException;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import annotations.AdminSecured;
 import annotations.DBempl;
 import annotations.DBtoken;
+import annotations.Secured;
 import ca.bcit.infosys.employee.EmployeeList;
 import db.TokenList;
 
 /**
  * Filter for admin requests.
  */
-@AdminSecured
+@Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-public class AdminAuthenticationFilter implements ContainerRequestFilter {
+public class AuthenticationFilter implements ContainerRequestFilter {
 
     /** DAO for employees. */
     @Inject @DBempl private EmployeeList db;
@@ -56,7 +55,7 @@ public class AdminAuthenticationFilter implements ContainerRequestFilter {
      */
     private void validateToken(final String token) throws Exception {
 
-        if (!dbToken.isValidToken(token) || !dbToken.isAdminToken(token)) {
+        if (!dbToken.isValidToken(token)) {
             throw new Exception();
         }
     }

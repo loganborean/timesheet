@@ -1,5 +1,6 @@
 package api;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,6 +23,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -56,11 +60,6 @@ public class EmployeeResource {
     /** Validator for employees. */
     @Inject private EmployeeRestValidator employeeValidator;
 
-    /** authenticator. */
-    @Inject private ApiAuthenticator authenticator;
-
-    /* **********************PUBLIC*********************** */
-
     /** Ctor. */
     public EmployeeResource() { }
 
@@ -78,7 +77,16 @@ public class EmployeeResource {
                                             final Employee emp)
                                                     throws Exception {
 //        authenticator.validateAdminCredentials(info);
-        employeeValidator.validate(emp);
+        try {
+            employeeValidator.validate(emp);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity(e.getMessage())
+                           .build();
+        }
+
         db.addEmployee(emp);
         return Response.created(URI.create("/employees/" + emp.getId()))
                                    .build();
@@ -91,25 +99,32 @@ public class EmployeeResource {
      * @return the employee.
      */
     @GET
+    @AdminSecured
     @Path("{id}")
     @Produces("application/xml")
     public Employee getEmployee(@PathParam("id") final int id,
                                 @Context final UriInfo info) {
-        authenticator.validateAdminCredentials(info);
-        Employee supplier = db.getEmployeeById(id);
-        return supplier;
+        Employee emp = db.getEmployeeById(id);
+        if (emp == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        return emp;
     }
 
     /**
      * Returns a list of employees from a GET request.
      * @param info the query parameters.
      * @return the list of employees.
+     * @throws IOException 
      */
     @GET
+    @AdminSecured
     @Produces("application/xml")
     public List<Employee> getEmployees(@Context final UriInfo info) {
-        authenticator.validateAdminCredentials(info);
         List<Employee> emps = db.getEmployees();
+        if (emps == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
         return emps;
     }
 
@@ -119,16 +134,24 @@ public class EmployeeResource {
      * @param emp the employee info to modify with.
      */
     @PUT
+    @AdminSecured
     @Path("{id}")
     @Consumes("application/xml")
-    public void modify(@Context final UriInfo info,
+    public Response modify(@Context final UriInfo info,
                        @PathParam("id") final Integer id,
                                         final Employee emp) {
-        authenticator.validateAdminCredentials(info);
-
-        // TODO put this into validator
-        authenticator.checkEmployeeDoesntExist(id);
+        try {
+            employeeValidator.checkEmployeeExists(id);
+            employeeValidator.validate(emp, id,
+                    db.getEmployeeById(id).getEmpNumber());
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity(e.getMessage())
+                           .build();
+        }
         db.editEmpoyee(emp);
+        return Response.ok().build();
     }
 
     /**
@@ -136,13 +159,18 @@ public class EmployeeResource {
      * @param id the id of the employee to delete.
      */
     @DELETE
+    @AdminSecured
     @Path("{id}")
-    public void deleteEmployee(@PathParam("id") final int id) {
+    public Response deleteEmployee(@PathParam("id") final int id) {
         Employee emp = db.getEmployeeById(id);
         if (emp == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity("Employee does not exist")
+                           .build();
         }
         db.deleteEmpoyee(emp);
+        return Response.ok().build();
     }
 
     // delete this
