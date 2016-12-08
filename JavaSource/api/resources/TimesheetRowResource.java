@@ -1,5 +1,6 @@
-package api;
+package api.resources;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -14,10 +15,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import annotations.DBsheets;
+import annotations.Secured;
 import ca.bcit.infosys.employee.Employee;
 import ca.bcit.infosys.timesheet.Timesheet;
 import ca.bcit.infosys.timesheet.TimesheetCollection;
@@ -30,7 +33,7 @@ public class TimesheetRowResource {
     private Employee currentEmp;
     
     private Timesheet timesheet;
-
+    
     public TimesheetRowResource() { }
 
     public TimesheetRowResource(Employee emp, Timesheet sheet, TimesheetCollection db) {
@@ -56,41 +59,62 @@ public class TimesheetRowResource {
                 return row;
             }
         }
-        return null;
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
     @PUT
     @Path("{id}")
     @Consumes("application/xml")
-    public void updateRow(@PathParam("id") int id, TimesheetRow row) {
+    public Response updateRow(@PathParam("id") int id, TimesheetRow row) {
+        row.setId(id);
         if (db.getTimesheetRow(id) == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity("timesheet row does not exist")
+                           .build();
         }
+        row.setTimesheetId(timesheet.getId());
 
         db.updateRow(row);
+        return Response.ok().build();
     }
 
     @POST
     @Consumes("application/xml")
-    public void createRow(TimesheetRow row) {
+    public Response createRow(TimesheetRow row) {
 
-        if (db.getTimesheetRow(row.getId()) != null) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
-        }
-
+        row.setTimesheetId(timesheet.getId());
         db.insertRow(row);
+        return Response.created(
+                URI
+                .create("/timesheets/" + timesheet.getId()
+                        + "/rows/" + currentEmp.getId()))
+                .build();
     }
 
     @DELETE
     @Path("{id}")
-    public void deleteRow(@PathParam("id") int id) {
+    public Response deleteRow(@PathParam("id") int id) {
 
         TimesheetRow row = db.getTimesheetRow(id);
         if (row == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity("No row with that id")
+                           .build();
+        }
+
+        if (row.getTimesheetId() != timesheet.getId()) {
+
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .type(MediaType.APPLICATION_XHTML_XML)
+                           .entity("You do not have access "
+                                   + "to that timesheet row")
+                           .build();
         }
 
         db.deleteRow(row);
+        return Response.ok().build();
     }
 
 }

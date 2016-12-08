@@ -1,4 +1,4 @@
-package api;
+package api.resources;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ import domain.Token;
 import services.TimesheetService;
 
 @Path("/timesheets")
+@Secured
 public class TimesheetResource {
 
     @Inject @DBsheets private TimesheetCollection db;
@@ -98,6 +99,7 @@ public class TimesheetResource {
     @Produces("application/xml")
     public TimesheetRowResource getTimesheets(@Context final UriInfo info,
                                               @PathParam("id") final int id) {
+        this.manualFilter(info);
         Timesheet sheet = db.getTimesheetById(id);
 
         if (sheet == null) {
@@ -176,8 +178,34 @@ public class TimesheetResource {
         return null;
     }
 
+
+    public void manualFilter(UriInfo info) {
+        String token = info.getQueryParameters().getFirst("t");
+
+        if (token == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        try {
+            validateToken(token);
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Validates a token.
+     * @param token the token to validate.
+     * @throws Exception ex thrown.
+     */
+    private void validateToken(final String token) throws Exception {
+
+        if (!dbToken.isValidToken(token)) {
+            throw new Exception();
+        }
+    }
+
     public Timesheet getLatestSheet(Employee currentEmp) {
-        
         if (currentEmp == null) {
             return null;
         }

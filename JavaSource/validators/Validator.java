@@ -251,6 +251,7 @@ public class Validator implements Serializable {
             }
         }
     }
+    /*   ************************ row **************** */
 
     /**
      * Validates the hours.

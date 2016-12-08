@@ -1,4 +1,4 @@
-package api;
+package api.resources;
 
 import java.io.IOException;
 import java.net.URI;
@@ -78,7 +78,6 @@ public class EmployeeResource {
     public Response createEmployee(@Context final UriInfo info,
                                             final Employee emp)
                                                     throws Exception {
-//        authenticator.validateAdminCredentials(info);
         try {
             employeeValidator.validate(emp);
         } catch (Exception e) {
@@ -174,15 +173,5 @@ public class EmployeeResource {
         db.deleteEmpoyee(emp);
         return Response.ok().build();
     }
-
-    // delete this
-//    @Path("{id}/timesheets")
-//    @Produces("application/xml")
-//    public TimesheetResource getTimesheets(@PathParam("id") final int id) {
-//        return new TimesheetResource(db.getEmployeeById(id), dbsheet);
-//    }
-
-
-    /* **********************PRIVATE*********************** */
 
 }
